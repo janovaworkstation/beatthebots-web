@@ -29,7 +29,7 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 20px;
     }
-    .ep-card { cursor: pointer; text-decoration: none; display: block; }
+    .ep-card { cursor: pointer; display: block; }
     .ep-thumb {
       width: 100%; aspect-ratio: 16/9;
       background: var(--bg-elevated);
@@ -207,6 +207,18 @@
     }
 
     // ── Episodes grid ─────────────────────────────────────────────────────────
+    function playVideo(cardEl, embedUrl, title) {
+      const thumb = cardEl.querySelector('.ep-thumb');
+      thumb.innerHTML = `<iframe src="${embedUrl}?rel=0&modestbranding=1&autoplay=1"
+        title="${title}" frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowfullscreen
+        style="position:absolute;top:0;left:0;width:100%;height:100%;"></iframe>`;
+      thumb.style.position = 'relative';
+      cardEl.style.cursor = 'default';
+      cardEl.onclick = null;
+    }
+
     function renderGrid(videos) {
       if (!videos.length) {
         document.getElementById('episodes-grid-container').innerHTML =
@@ -214,14 +226,21 @@
         return;
       }
       const cards = videos.map(v => `
-        <a class="ep-card" href="${v.watch_url}" target="_blank" rel="noopener" data-type="${v.game_type || 'other'}" data-comparison="${v.is_comparison ? '1' : '0'}">
+        <div class="ep-card" data-embed="${v.embed_url}" data-title="${v.title}" data-type="${v.game_type || 'other'}">
           <div class="ep-thumb">${thumbHTML(v, false)}</div>
           <div class="ep-type">${epTypeLabel(v)}</div>
           <div class="ep-title">${v.title.split(' | ')[0]}</div>
           <div class="ep-date">${fmtDate(v.game_date || v.published_at)}</div>
-        </a>`).join('');
+        </div>`).join('');
       document.getElementById('episodes-grid-container').innerHTML =
         `<div class="episodes-grid">${cards}</div>`;
+
+      // Attach click handlers
+      document.querySelectorAll('#episodes-grid-container .ep-card').forEach(card => {
+        card.addEventListener('click', () => {
+          playVideo(card, card.dataset.embed, card.dataset.title);
+        });
+      });
     }
 
     // ── Filter handler ────────────────────────────────────────────────────────
