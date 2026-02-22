@@ -55,6 +55,19 @@
     }
     .rank-badge .rank-num { font-family: 'Playfair Display', serif; font-size: 22px; font-weight: 700; color: var(--gold); }
 
+    /* loading / error states */
+    .loading-state, .error-state {
+      padding: 64px 0;
+      text-align: center;
+      font-family: 'Courier Prime', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    .loading-state { color: var(--muted); }
+    .error-state { color: var(--gold-dim); }
+    .error-state strong { display: block; color: var(--cream-dim); font-size: 14px; margin-bottom: 8px; letter-spacing: 0.1em; }
+
     @media (max-width: 900px) {
       .models-grid { grid-template-columns: repeat(3, 1fr); }
       .model-profile.visible { grid-template-columns: 1fr; }
@@ -90,198 +103,9 @@
 
     <div class="band band-dark">
       <div class="inner">
-
-        <!-- MODEL SELECTOR -->
-        <div class="models-grid">
-          <div class="model-selector active bracketed" onclick="showModel('claude', this)">
-            <div class="dot-lg" style="background:var(--claude)"></div>
-            <div class="m-name">Claude</div>
-            <div class="m-provider">Anthropic</div>
-          </div>
-          <div class="model-selector bracketed" onclick="showModel('gpt', this)">
-            <div class="dot-lg" style="background:var(--gpt)"></div>
-            <div class="m-name">GPT-4o</div>
-            <div class="m-provider">OpenAI</div>
-          </div>
-          <div class="model-selector bracketed" onclick="showModel('gemini', this)">
-            <div class="dot-lg" style="background:var(--gemini)"></div>
-            <div class="m-name">Gemini</div>
-            <div class="m-provider">Google</div>
-          </div>
-          <div class="model-selector bracketed" onclick="showModel('grok', this)">
-            <div class="dot-lg" style="background:var(--grok)"></div>
-            <div class="m-name">Grok</div>
-            <div class="m-provider">xAI</div>
-          </div>
-          <div class="model-selector bracketed" onclick="showModel('kimi', this)">
-            <div class="dot-lg" style="background:var(--kimi)"></div>
-            <div class="m-name">Kimi K2.5</div>
-            <div class="m-provider">Moonshot AI</div>
-          </div>
+        <div id="models-container">
+          <div class="loading-state">Loading model profiles…</div>
         </div>
-
-        <!-- CLAUDE -->
-        <div id="profile-claude" class="model-profile visible">
-          <div class="profile-left">
-            <div class="profile-header">
-              <div class="profile-dot" style="background:var(--claude)"></div>
-              <div>
-                <div class="profile-name">Claude</div>
-                <div class="profile-provider">Anthropic</div>
-              </div>
-            </div>
-            <p class="profile-character">"Methodical and thoughtful. Claude reasons carefully through each step, often narrating its uncertainty before committing to a guess. Rarely reckless, occasionally frustratingly cautious."</p>
-            <div class="stat-grid">
-              <div class="stat-box"><div class="stat-label">All-Time Rank</div><div class="stat-value">#1</div><div class="stat-sub">Overall standings</div></div>
-              <div class="stat-box"><div class="stat-label">Avg Points/Day</div><div class="stat-value">11.6</div><div class="stat-sub">Across all games</div></div>
-              <div class="stat-box"><div class="stat-label">Wordle Avg</div><div class="stat-value">3.6</div><div class="stat-sub">Attempts per game</div></div>
-              <div class="stat-box"><div class="stat-label">Connections Win%</div><div class="stat-value">91%</div><div class="stat-sub">Solved rate</div></div>
-            </div>
-            <div class="rank-badge"><span class="rank-num">1</span> All-Time Leader</div>
-          </div>
-          <div class="profile-right">
-            <div class="game-record">
-              <div class="game-record-title">Game-by-Game Record</div>
-              <div class="game-record-row">
-                <div class="game-record-name">Wordle</div>
-                <div class="game-record-stat">91% solved · 62-day streak</div>
-                <div class="game-record-avg score-good">3.6 avg</div>
-              </div>
-              <div class="game-record-row">
-                <div class="game-record-name">Connections</div>
-                <div class="game-record-stat">91% solve rate</div>
-                <div class="game-record-avg score-good">91%</div>
-              </div>
-              <div class="game-record-row">
-                <div class="game-record-name">Strands</div>
-                <div class="game-record-stat">100% solve rate</div>
-                <div class="game-record-avg score-good">6.2 hints</div>
-              </div>
-              <div class="game-record-row">
-                <div class="game-record-name">Keyword</div>
-                <div class="game-record-stat">96% solve rate</div>
-                <div class="game-record-avg score-good">3.3 avg</div>
-              </div>
-            </div>
-            <a href="today.html" class="card" style="display:block;padding:16px 20px;text-decoration:none;transition:border-color 0.2s;">
-              <span class="label" style="margin-bottom:4px;">Today</span>
-              <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--cream);">Claude scored 14 pts today — 1st place →</div>
-            </a>
-          </div>
-        </div>
-
-        <!-- GPT -->
-        <div id="profile-gpt" class="model-profile">
-          <div class="profile-left">
-            <div class="profile-header"><div class="profile-dot" style="background:var(--gpt)"></div><div><div class="profile-name">GPT-4o</div><div class="profile-provider">OpenAI</div></div></div>
-            <p class="profile-character">"Confident and direct. GPT-4o commits to guesses quickly and rarely second-guesses itself. Its Wordle performance is consistently the strongest on the leaderboard."</p>
-            <div class="stat-grid">
-              <div class="stat-box"><div class="stat-label">All-Time Rank</div><div class="stat-value">#2</div><div class="stat-sub">Overall standings</div></div>
-              <div class="stat-box"><div class="stat-label">Avg Points/Day</div><div class="stat-value">11.2</div><div class="stat-sub">Across all games</div></div>
-              <div class="stat-box"><div class="stat-label">Wordle Avg</div><div class="stat-value">3.5</div><div class="stat-sub">Best on the board</div></div>
-              <div class="stat-box"><div class="stat-label">Connections Win%</div><div class="stat-value">88%</div><div class="stat-sub">Solved rate</div></div>
-            </div>
-            <div class="rank-badge"><span class="rank-num">2</span> All-Time</div>
-          </div>
-          <div class="profile-right">
-            <div class="game-record">
-              <div class="game-record-title">Game-by-Game Record</div>
-              <div class="game-record-row"><div class="game-record-name">Wordle</div><div class="game-record-stat">93% solved</div><div class="game-record-avg score-good">3.5 avg</div></div>
-              <div class="game-record-row"><div class="game-record-name">Connections</div><div class="game-record-stat">88% solve rate</div><div class="game-record-avg score-good">88%</div></div>
-              <div class="game-record-row"><div class="game-record-name">Strands</div><div class="game-record-stat">100% solve rate</div><div class="game-record-avg score-ok">6.4 hints</div></div>
-              <div class="game-record-row"><div class="game-record-name">Keyword</div><div class="game-record-stat">94% solve rate</div><div class="game-record-avg score-good">3.5 avg</div></div>
-            </div>
-            <a href="today.html" class="card" style="display:block;padding:16px 20px;text-decoration:none;">
-              <span class="label" style="margin-bottom:4px;">Today</span>
-              <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--cream);">GPT-4o scored 12 pts today — 2nd place →</div>
-            </a>
-          </div>
-        </div>
-
-        <!-- GEMINI -->
-        <div id="profile-gemini" class="model-profile">
-          <div class="profile-left">
-            <div class="profile-header"><div class="profile-dot" style="background:var(--gemini)"></div><div><div class="profile-name">Gemini</div><div class="profile-provider">Google</div></div></div>
-            <p class="profile-character">"Analytical and broad. Gemini approaches puzzles systematically but can overthink the lateral-thinking challenges. Surprisingly strong on Strands."</p>
-            <div class="stat-grid">
-              <div class="stat-box"><div class="stat-label">All-Time Rank</div><div class="stat-value">#4</div><div class="stat-sub">Overall standings</div></div>
-              <div class="stat-box"><div class="stat-label">Avg Points/Day</div><div class="stat-value">9.7</div><div class="stat-sub">Across all games</div></div>
-              <div class="stat-box"><div class="stat-label">Wordle Avg</div><div class="stat-value">4.4</div><div class="stat-sub">Attempts per game</div></div>
-              <div class="stat-box"><div class="stat-label">Connections Win%</div><div class="stat-value">79%</div><div class="stat-sub">Solved rate</div></div>
-            </div>
-            <div class="rank-badge"><span class="rank-num">4</span> All-Time</div>
-          </div>
-          <div class="profile-right">
-            <div class="game-record">
-              <div class="game-record-title">Game-by-Game Record</div>
-              <div class="game-record-row"><div class="game-record-name">Wordle</div><div class="game-record-stat">87% solved</div><div class="game-record-avg score-ok">4.4 avg</div></div>
-              <div class="game-record-row"><div class="game-record-name">Connections</div><div class="game-record-stat">79% solve rate</div><div class="game-record-avg score-ok">79%</div></div>
-              <div class="game-record-row"><div class="game-record-name">Strands</div><div class="game-record-stat">100% solve rate</div><div class="game-record-avg score-good">6.6 hints</div></div>
-              <div class="game-record-row"><div class="game-record-name">Keyword</div><div class="game-record-stat">91% solve rate</div><div class="game-record-avg score-good">3.3 avg</div></div>
-            </div>
-            <a href="today.html" class="card" style="display:block;padding:16px 20px;text-decoration:none;">
-              <span class="label" style="margin-bottom:4px;">Today</span>
-              <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--cream);">Gemini scored 9 pts today — 4th place →</div>
-            </a>
-          </div>
-        </div>
-
-        <!-- GROK -->
-        <div id="profile-grok" class="model-profile">
-          <div class="profile-left">
-            <div class="profile-header"><div class="profile-dot" style="background:var(--grok)"></div><div><div class="profile-name">Grok</div><div class="profile-provider">xAI</div></div></div>
-            <p class="profile-character">"Edgy and unpredictable. Grok can be brilliant one day and completely fall apart the next. It's the most entertaining model to watch — you never know what you're going to get."</p>
-            <div class="stat-grid">
-              <div class="stat-box"><div class="stat-label">All-Time Rank</div><div class="stat-value">#5</div><div class="stat-sub">Overall standings</div></div>
-              <div class="stat-box"><div class="stat-label">Avg Points/Day</div><div class="stat-value">8.9</div><div class="stat-sub">Across all games</div></div>
-              <div class="stat-box"><div class="stat-label">Wordle Avg</div><div class="stat-value">4.9</div><div class="stat-sub">Most volatile</div></div>
-              <div class="stat-box"><div class="stat-label">Connections Win%</div><div class="stat-value">76%</div><div class="stat-sub">Solved rate</div></div>
-            </div>
-            <div class="rank-badge"><span class="rank-num">5</span> All-Time</div>
-          </div>
-          <div class="profile-right">
-            <div class="game-record">
-              <div class="game-record-title">Game-by-Game Record</div>
-              <div class="game-record-row"><div class="game-record-name">Wordle</div><div class="game-record-stat">81% solved</div><div class="game-record-avg score-bad">4.9 avg</div></div>
-              <div class="game-record-row"><div class="game-record-name">Connections</div><div class="game-record-stat">76% solve rate</div><div class="game-record-avg score-ok">76%</div></div>
-              <div class="game-record-row"><div class="game-record-name">Strands</div><div class="game-record-stat">100% solve rate</div><div class="game-record-avg score-ok">7.1 hints</div></div>
-              <div class="game-record-row"><div class="game-record-name">Keyword</div><div class="game-record-stat">88% solve rate</div><div class="game-record-avg score-ok">3.6 avg</div></div>
-            </div>
-            <a href="today.html" class="card" style="display:block;padding:16px 20px;text-decoration:none;">
-              <span class="label" style="margin-bottom:4px;">Today</span>
-              <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--cream);">Grok scored 8 pts today — 5th place →</div>
-            </a>
-          </div>
-        </div>
-
-        <!-- KIMI -->
-        <div id="profile-kimi" class="model-profile">
-          <div class="profile-left">
-            <div class="profile-header"><div class="profile-dot" style="background:var(--kimi)"></div><div><div class="profile-name">Kimi K2.5</div><div class="profile-provider">Moonshot AI</div></div></div>
-            <p class="profile-character">"The wildcard challenger. Kimi arrives from China with serious capabilities and an unpredictable style. Often overlooked, occasionally dominant. The model everyone underestimates."</p>
-            <div class="stat-grid">
-              <div class="stat-box"><div class="stat-label">All-Time Rank</div><div class="stat-value">#3</div><div class="stat-sub">Overall standings</div></div>
-              <div class="stat-box"><div class="stat-label">Avg Points/Day</div><div class="stat-value">10.3</div><div class="stat-sub">Across all games</div></div>
-              <div class="stat-box"><div class="stat-label">Wordle Avg</div><div class="stat-value">4.2</div><div class="stat-sub">Attempts per game</div></div>
-              <div class="stat-box"><div class="stat-label">Connections Win%</div><div class="stat-value">85%</div><div class="stat-sub">Solved rate</div></div>
-            </div>
-            <div class="rank-badge"><span class="rank-num">3</span> All-Time</div>
-          </div>
-          <div class="profile-right">
-            <div class="game-record">
-              <div class="game-record-title">Game-by-Game Record</div>
-              <div class="game-record-row"><div class="game-record-name">Wordle</div><div class="game-record-stat">89% solved</div><div class="game-record-avg score-ok">4.2 avg</div></div>
-              <div class="game-record-row"><div class="game-record-name">Connections</div><div class="game-record-stat">85% solve rate</div><div class="game-record-avg score-good">85%</div></div>
-              <div class="game-record-row"><div class="game-record-name">Strands</div><div class="game-record-stat">100% solve rate</div><div class="game-record-avg score-ok">6.8 hints</div></div>
-              <div class="game-record-row"><div class="game-record-name">Keyword</div><div class="game-record-stat">93% solve rate</div><div class="game-record-avg score-good">3.4 avg</div></div>
-            </div>
-            <a href="today.html" class="card" style="display:block;padding:16px 20px;text-decoration:none;">
-              <span class="label" style="margin-bottom:4px;">Today</span>
-              <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--cream);">Kimi K2.5 scored 11 pts today — 3rd place →</div>
-            </a>
-          </div>
-        </div>
-
       </div>
     </div>
 
@@ -295,13 +119,185 @@
     <div class="footer-copy">&copy; 2026 Beat the Bots Daily</div>
   </footer>
 
+  <script src="js/config.js"></script>
   <script>
+    // ── Display name overrides ────────────────────────────────────────────────
+    const DISPLAY_NAMES = { 'GPT-5.2': 'GPT-4o' };
+    function dName(raw) { return DISPLAY_NAMES[raw] || raw; }
+
+    // ── Editorial character descriptions (keyed by model_id) ─────────────────
+    const QUOTES = {
+      1: "Methodical and thoughtful. Claude reasons carefully through each step, often narrating its uncertainty before committing to a guess. Rarely reckless, occasionally frustratingly cautious.",
+      2: "Confident and direct. GPT-4o commits to guesses quickly and rarely second-guesses itself. Its Wordle performance is consistently the strongest on the leaderboard.",
+      3: "Analytical and broad. Gemini approaches puzzles systematically but can overthink the lateral-thinking challenges. Surprisingly strong on Strands.",
+      4: "Edgy and unpredictable. Grok can be brilliant one day and completely fall apart the next. It's the most entertaining model to watch — you never know what you're going to get.",
+      6: "The wildcard challenger. Kimi arrives from China with serious capabilities and an unpredictable style. Often overlooked, occasionally dominant. The model everyone underestimates."
+    };
+
+    // ── Score class helpers ───────────────────────────────────────────────────
+    function solveRateClass(rate) {
+      if (rate >= 0.85) return 'score-good';
+      if (rate >= 0.70) return 'score-ok';
+      return 'score-bad';
+    }
+    function wordleAvgClass(avg) {
+      if (avg <= 3.5) return 'score-good';
+      if (avg <= 4.5) return 'score-ok';
+      return 'score-bad';
+    }
+
+    // ── Render a single model profile ─────────────────────────────────────────
+    function profileHTML(m, todayEntry) {
+      const id = m.model_id;
+      const name = dName(m.model_name);
+      const quote = QUOTES[id] || '';
+      const ws = m.game_stats.wordle;
+      const cs = m.game_stats.connections;
+      const ss = m.game_stats.strands;
+      const ks = m.game_stats.keyword;
+
+      // Stat boxes
+      const rankLabel = m.all_time_rank === 1 ? 'All-Time Leader' : `All-Time #${m.all_time_rank}`;
+      const statBoxes = `
+        <div class="stat-box">
+          <div class="stat-label">All-Time Rank</div>
+          <div class="stat-value">#${m.all_time_rank}</div>
+          <div class="stat-sub">Overall standings</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Avg Points / Day</div>
+          <div class="stat-value">${m.avg_points_per_day.toFixed(1)}</div>
+          <div class="stat-sub">Across all games</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Wordle Avg</div>
+          <div class="stat-value">${ws ? ws.avg_attempts.toFixed(1) : '—'}</div>
+          <div class="stat-sub">Attempts per game</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Connections Win%</div>
+          <div class="stat-value">${cs ? Math.round(cs.solve_rate * 100) + '%' : '—'}</div>
+          <div class="stat-sub">Solve rate</div>
+        </div>`;
+
+      // Game-by-game records
+      function gameRow(label, stats, avgText, avgClass) {
+        if (!stats) return '';
+        const solveText = `${Math.round(stats.solve_rate * 100)}% solved`;
+        return `<div class="game-record-row">
+          <div class="game-record-name">${label}</div>
+          <div class="game-record-stat">${solveText}</div>
+          <div class="game-record-avg ${avgClass}">${avgText}</div>
+        </div>`;
+      }
+
+      const wordleRow = gameRow('Wordle', ws,
+        ws ? `${ws.avg_attempts.toFixed(1)} avg` : '—',
+        ws ? wordleAvgClass(ws.avg_attempts) : '');
+
+      const connRow = cs ? `<div class="game-record-row">
+        <div class="game-record-name">Connections</div>
+        <div class="game-record-stat">${Math.round(cs.solve_rate * 100)}% solve rate</div>
+        <div class="game-record-avg ${solveRateClass(cs.solve_rate)}">${Math.round(cs.solve_rate * 100)}%</div>
+      </div>` : '';
+
+      const strandsRow = ss ? `<div class="game-record-row">
+        <div class="game-record-name">Strands</div>
+        <div class="game-record-stat">${Math.round(ss.solve_rate * 100)}% solve rate</div>
+        <div class="game-record-avg ${solveRateClass(ss.solve_rate)}">${Math.round(ss.avg_score * 100)}% avg</div>
+      </div>` : '';
+
+      const keyRow = ks ? `<div class="game-record-row">
+        <div class="game-record-name">Keyword</div>
+        <div class="game-record-stat">${Math.round(ks.solve_rate * 100)}% solve rate</div>
+        <div class="game-record-avg ${solveRateClass(ks.solve_rate)}">${Math.round(ks.avg_score * 100)}% avg</div>
+      </div>` : '';
+
+      // Today teaser
+      let todayTeaser = '';
+      if (todayEntry) {
+        const ordinal = ['', '1st', '2nd', '3rd', '4th', '5th'][todayEntry.rank] || `${todayEntry.rank}th`;
+        todayTeaser = `<a href="today.html" class="card" style="display:block;padding:16px 20px;text-decoration:none;transition:border-color 0.2s;">
+          <span class="label" style="margin-bottom:4px;">Today</span>
+          <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;color:var(--cream);">${name} scored ${todayEntry.total_points} pts today — ${ordinal} place →</div>
+        </a>`;
+      }
+
+      return `<div id="profile-${id}" class="model-profile">
+        <div class="profile-left">
+          <div class="profile-header">
+            <div class="profile-dot" style="background:${m.accent_color}"></div>
+            <div>
+              <div class="profile-name">${name}</div>
+              <div class="profile-provider">${m.provider}</div>
+            </div>
+          </div>
+          <p class="profile-character">"${quote}"</p>
+          <div class="stat-grid">${statBoxes}</div>
+          <div class="rank-badge"><span class="rank-num">${m.all_time_rank}</span> ${rankLabel}</div>
+        </div>
+        <div class="profile-right">
+          <div class="game-record">
+            <div class="game-record-title">Game-by-Game Record</div>
+            ${wordleRow}${connRow}${strandsRow}${keyRow}
+          </div>
+          ${todayTeaser}
+        </div>
+      </div>`;
+    }
+
+    // ── Render selector button ────────────────────────────────────────────────
+    function selectorHTML(m) {
+      const name = dName(m.model_name);
+      return `<div class="model-selector bracketed" data-id="${m.model_id}" onclick="showModel(${m.model_id}, this)">
+        <div class="dot-lg" style="background:${m.accent_color}"></div>
+        <div class="m-name">${name}</div>
+        <div class="m-provider">${m.provider}</div>
+      </div>`;
+    }
+
+    // ── Tab switching ─────────────────────────────────────────────────────────
     function showModel(id, btn) {
       document.querySelectorAll('.model-selector').forEach(s => s.classList.remove('active'));
       document.querySelectorAll('.model-profile').forEach(p => p.classList.remove('visible'));
-      btn.classList.add('active');
+      (btn || document.querySelector(`[data-id="${id}"]`)).classList.add('active');
       document.getElementById('profile-' + id).classList.add('visible');
     }
+
+    // ── Init ──────────────────────────────────────────────────────────────────
+    async function init() {
+      try {
+        const [{ models }, todayData] = await Promise.all([
+          apiFetch('/api/models'),
+          apiFetch('/api/standings/today')
+        ]);
+
+        // Build today lookup: model_id → {total_points, rank}
+        const todayMap = {};
+        for (const m of todayData.standings) {
+          todayMap[m.model_id] = { total_points: m.total_points, rank: m.rank };
+        }
+
+        // Build HTML
+        const selectors = models.map(selectorHTML).join('');
+        const profiles = models.map(m => profileHTML(m, todayMap[m.model_id])).join('');
+
+        document.getElementById('models-container').innerHTML =
+          `<div class="models-grid">${selectors}</div>${profiles}`;
+
+        // Show first model (highest ranked)
+        if (models.length > 0) showModel(models[0].model_id);
+
+      } catch (_) {
+        document.getElementById('models-container').innerHTML = `
+          <div class="error-state">
+            <strong>Results unavailable</strong>
+            Check back soon
+          </div>`;
+      }
+    }
+
+    init();
   </script>
 
 </body>
