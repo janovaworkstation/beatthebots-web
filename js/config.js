@@ -11,7 +11,8 @@
 // Detect local development vs production
 const IS_LOCAL = window.location.hostname === 'localhost' ||
                  window.location.hostname === '127.0.0.1' ||
-                 window.location.hostname === '';
+                 window.location.hostname === '' ||
+                 window.location.hostname.endsWith('.ts.net');
 
 // In production, relative /api/* calls are rewritten by Vercel.
 // Locally, point directly to Mac Mini on port 8100.

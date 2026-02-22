@@ -2,11 +2,11 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://claws-mac-mini.tail9b4f09.ts.net/api/:path*"
+      "destination": "https://claws-mac-mini.tail9b4f09.ts.net/api/api/:path*"
     },
     {
       "source": "/health",
-      "destination": "https://claws-mac-mini.tail9b4f09.ts.net/health"
+      "destination": "https://claws-mac-mini.tail9b4f09.ts.net/api/health"
     }
   ]
 }
