@@ -27,9 +27,7 @@
       display: flex; align-items: center; justify-content: center;
       position: relative; overflow: hidden; margin-bottom: 12px;
     }
-    .embed-placeholder {
-      text-align: center;
-    }
+    .embed-placeholder { text-align: center; }
     .embed-play {
       width: 64px; height: 64px;
       border: 2px solid var(--gold-dim);
@@ -56,6 +54,19 @@
 
     /* winner badge */
     .winner-badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(201,160,82,0.12); border: 1px solid var(--gold-dim); padding: 3px 10px; font-family: 'Courier Prime', monospace; font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--gold); margin-left: 8px; }
+
+    /* loading / error states */
+    .loading-state, .error-state {
+      padding: 64px 0;
+      text-align: center;
+      font-family: 'Courier Prime', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    .loading-state { color: var(--muted); }
+    .error-state { color: var(--gold-dim); }
+    .error-state strong { display: block; color: var(--cream-dim); font-size: 14px; margin-bottom: 8px; letter-spacing: 0.1em; }
 
     @media (max-width: 768px) {
       .games-grid { grid-template-columns: 1fr; }
@@ -86,8 +97,8 @@
           <h1 class="page-title serif">Today</h1>
         </div>
         <div class="page-hero-right">
-          <div class="date-label">Friday</div>
-          <div class="date-value">Feb 21, 2026</div>
+          <div class="date-label" id="today-day">—</div>
+          <div class="date-value" id="today-date">—</div>
         </div>
       </div>
     </div>
@@ -100,7 +111,7 @@
         <div class="episode-embed bracketed">
           <div class="embed-placeholder">
             <div class="embed-play"><div class="play-tri"></div></div>
-            <div class="embed-title">Daily Recap · Feb 21, 2026</div>
+            <div class="embed-title" id="embed-title">Daily Recap</div>
             <div class="embed-sub">Who won today? Watch the full breakdown</div>
           </div>
         </div>
@@ -113,123 +124,10 @@
     <!-- GAME RESULTS -->
     <div class="band band-dark">
       <div class="inner">
-        <span class="label">Feb 21, 2026</span>
+        <span class="label" id="results-date-label">—</span>
         <h2 class="section-title serif" style="margin-bottom:32px;">Game <span class="gold">Results</span></h2>
-
-        <div class="games-grid">
-
-          <!-- WORDLE -->
-          <div class="card game-card bracketed">
-            <div class="game-card-header">
-              <div class="game-title">Wordle</div>
-              <div class="game-meta">#981<br/>New York Times</div>
-            </div>
-            <div class="result-row">
-              <div class="result-model"><div class="dot" style="background:var(--gpt)"></div>GPT-4o <span class="winner-badge">Winner</span></div>
-              <div class="result-score score-good">3/6</div>
-            </div>
-            <div class="result-row">
-              <div class="result-model"><div class="dot" style="background:var(--claude)"></div>Claude</div>
-              <div class="result-score score-good">4/6</div>
-            </div>
-            <div class="result-row">
-              <div class="result-model"><div class="dot" style="background:var(--kimi)"></div>Kimi K2.5</div>
-              <div class="result-score score-ok">5/6</div>
-            </div>
-            <div class="result-row">
-              <div class="result-model"><div class="dot" style="background:var(--gemini)"></div>Gemini</div>
-              <div class="result-score score-ok">5/6</div>
-            </div>
-            <div class="result-row">
-              <div class="result-model"><div class="dot" style="background:var(--grok)"></div>Grok</div>
-              <div class="result-score score-bad">X/6</div>
-            </div>
-          </div>
-
-          <!-- CONNECTIONS -->
-          <div class="card game-card bracketed">
-            <div class="game-card-header">
-              <div class="game-title">Connections</div>
-              <div class="game-meta">#621<br/>New York Times</div>
-            </div>
-            <div class="result-row">
-              <div class="result-model"><div class="dot" style="background:var(--claude)"></div>Claude <span class="winner-badge">Tied</span></div>
-              <div class="result-score score-good">Solved ✓</div>
-            </div>
-            <div class="result-row">
-              <div class="result-model"><div class="dot" style="background:var(--gpt)"></div>GPT-4o <span class="winner-badge">Tied</span></div>
-              <div class="result-score score-good">Solved ✓</div>
-            </div>
-            <div class="result-row">
-              <div class="result-model"><div class="dot" style="background:var(--kimi)"></div>Kimi K2.5 <span class="winner-badge">Tied</span></div>
-              <div class="result-score score-good">Solved ✓</div>
-            </div>
-            <div class="result-row">
-              <div class="result-model"><div class="dot" style="background:var(--grok)"></div>Grok <span class="winner-badge">Tied</span></div>
-              <div class="result-score score-good">Solved ✓</div>
-            </div>
-            <div class="result-row">
-              <div class="result-model"><div class="dot" style="background:var(--gemini)"></div>Gemini</div>
-              <div class="result-score score-bad">Failed ✗</div>
-            </div>
-          </div>
-
-          <!-- STRANDS -->
-          <div class="card game-card bracketed">
-            <div class="game-card-header">
-              <div class="game-title">Strands</div>
-              <div class="game-meta">#407<br/>New York Times</div>
-            </div>
-            <div class="result-row">
-              <div class="result-model"><div class="dot" style="background:var(--gemini)"></div>Gemini <span class="winner-badge">Winner</span></div>
-              <div class="result-score score-good">5 hints</div>
-            </div>
-            <div class="result-row">
-              <div class="result-model"><div class="dot" style="background:var(--claude)"></div>Claude</div>
-              <div class="result-score score-good">6 hints</div>
-            </div>
-            <div class="result-row">
-              <div class="result-model"><div class="dot" style="background:var(--gpt)"></div>GPT-4o</div>
-              <div class="result-score score-ok">7 hints</div>
-            </div>
-            <div class="result-row">
-              <div class="result-model"><div class="dot" style="background:var(--kimi)"></div>Kimi K2.5</div>
-              <div class="result-score score-ok">7 hints</div>
-            </div>
-            <div class="result-row">
-              <div class="result-model"><div class="dot" style="background:var(--grok)"></div>Grok</div>
-              <div class="result-score score-ok">7 hints</div>
-            </div>
-          </div>
-
-          <!-- KEYWORD -->
-          <div class="card game-card bracketed">
-            <div class="game-card-header">
-              <div class="game-title">Keyword</div>
-              <div class="game-meta">#214<br/>Washington Post</div>
-            </div>
-            <div class="result-row">
-              <div class="result-model"><div class="dot" style="background:var(--claude)"></div>Claude <span class="winner-badge">Tied</span></div>
-              <div class="result-score score-good">3/6</div>
-            </div>
-            <div class="result-row">
-              <div class="result-model"><div class="dot" style="background:var(--kimi)"></div>Kimi K2.5 <span class="winner-badge">Tied</span></div>
-              <div class="result-score score-good">3/6</div>
-            </div>
-            <div class="result-row">
-              <div class="result-model"><div class="dot" style="background:var(--gemini)"></div>Gemini <span class="winner-badge">Tied</span></div>
-              <div class="result-score score-good">3/6</div>
-            </div>
-            <div class="result-row">
-              <div class="result-model"><div class="dot" style="background:var(--grok)"></div>Grok <span class="winner-badge">Tied</span></div>
-              <div class="result-score score-good">3/6</div>
-            </div>
-            <div class="result-row">
-              <div class="result-model"><div class="dot" style="background:var(--gpt)"></div>GPT-4o</div>
-              <div class="result-score score-good">4/6</div>
-            </div>
-          </div>
-
+        <div id="games-grid-container">
+          <div class="loading-state">Loading results…</div>
         </div>
       </div>
     </div>
@@ -244,5 +142,116 @@
     <div class="footer-copy">&copy; 2026 Beat the Bots Daily</div>
   </footer>
 
+  <script src="js/config.js"></script>
+  <script>
+    const DISPLAY_NAMES = { 'GPT-5.2': 'GPT-4o' };
+    function dName(raw) { return DISPLAY_NAMES[raw] || raw; }
+
+    const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+    function fmtDate(iso) {
+      if (!iso) return '—';
+      const [y, m, d] = iso.split('-').map(Number);
+      return `${MONTHS[m-1]} ${d}, ${y}`;
+    }
+
+    function getDayName(iso) {
+      const [y, m, d] = iso.split('-').map(Number);
+      return DAYS[new Date(y, m - 1, d).getDay()];
+    }
+
+    function ptsClass(pts) {
+      if (pts == null) return '';
+      if (pts >= 5) return 'score-good';
+      if (pts >= 3) return 'score-ok';
+      return 'score-bad';
+    }
+
+    function gameScore(gameKey, r) {
+      if (gameKey === 'wordle') {
+        if (r.solved) return { text: `${r.attempts_used}/6`, cls: ptsClass(r.points) };
+        return { text: 'X/6', cls: 'score-bad' };
+      }
+      if (gameKey === 'connections') {
+        return { text: r.solved ? 'Solved ✓' : 'Failed ✗', cls: r.solved ? 'score-good' : 'score-bad' };
+      }
+      if (gameKey === 'strands') {
+        if (r.solved) return { text: 'Solved ✓', cls: 'score-good' };
+        if (r.points > 0) return { text: `${r.points} pts`, cls: ptsClass(r.points) };
+        return { text: 'Failed ✗', cls: 'score-bad' };
+      }
+      if (gameKey === 'keyword') {
+        if (!r.solved) return { text: 'Failed', cls: 'score-bad' };
+        if (r.attempts_used <= 6) return { text: `${r.attempts_used}/6`, cls: ptsClass(r.points) };
+        return { text: `${r.points} pts`, cls: ptsClass(r.points) };
+      }
+      return { text: '—', cls: '' };
+    }
+
+    function publisherLabel(pub) {
+      if (pub === 'NYT') return 'New York Times';
+      if (pub === 'WaPo') return 'Washington Post';
+      return pub;
+    }
+
+    function renderResults(data) {
+      const { date, games } = data;
+
+      // Update date header
+      document.getElementById('today-day').textContent = getDayName(date);
+      document.getElementById('today-date').textContent = fmtDate(date);
+      document.getElementById('embed-title').textContent = `Daily Recap · ${fmtDate(date)}`;
+      document.getElementById('results-date-label').textContent = fmtDate(date);
+
+      const gameOrder = ['wordle', 'connections', 'strands', 'keyword'];
+
+      const cards = gameOrder.map(gk => {
+        const g = games[gk];
+        if (!g) return '';
+
+        const rows = g.results.map(r => {
+          const sc = gameScore(gk, r);
+          let badge = '';
+          if (r.winner && !r.tied) badge = `<span class="winner-badge">Winner</span>`;
+          else if (r.winner && r.tied) badge = `<span class="winner-badge">Tied</span>`;
+
+          return `<div class="result-row">
+            <div class="result-model">
+              <div class="dot" style="background:${r.accent_color}"></div>
+              ${dName(r.model_name)}${badge}
+            </div>
+            <div class="result-score ${sc.cls}">${sc.text}</div>
+          </div>`;
+        }).join('');
+
+        return `<div class="card game-card bracketed">
+          <div class="game-card-header">
+            <div class="game-title">${g.game_name}</div>
+            <div class="game-meta">${publisherLabel(g.publisher)}</div>
+          </div>
+          ${rows}
+        </div>`;
+      }).join('');
+
+      document.getElementById('games-grid-container').innerHTML =
+        `<div class="games-grid">${cards}</div>`;
+    }
+
+    async function loadResults() {
+      try {
+        const data = await apiFetch('/api/results/today');
+        renderResults(data);
+      } catch (_) {
+        document.getElementById('games-grid-container').innerHTML = `
+          <div class="error-state">
+            <strong>Results unavailable</strong>
+            Check back soon
+          </div>`;
+      }
+    }
+
+    loadResults();
+  </script>
 </body>
 </html>
