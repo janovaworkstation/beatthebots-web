@@ -66,6 +66,29 @@
     .ep-featured-title { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: var(--cream); line-height: 1.2; margin-bottom: 10px; }
     .ep-featured-date { font-family: 'Courier Prime', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
 
+    /* filter rows */
+    .filter-rows { margin-bottom: 24px; }
+    .filter-row {
+      display: flex; align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap; gap: 12px;
+      margin-bottom: 8px;
+    }
+    .filter-row:not(:first-child) { justify-content: flex-end; }
+    .filter-row:last-child { margin-bottom: 0; }
+
+    /* load more */
+    .load-more-wrap { text-align: center; padding: 32px 0 8px; }
+    .load-more-btn {
+      font-family: 'Courier Prime', monospace;
+      font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--cream-dim); background: none;
+      border: 1px solid var(--muted); padding: 11px 32px;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .load-more-btn:hover { border-color: var(--gold-dim); color: var(--gold); }
+    .load-more-count { color: var(--muted); }
+
     /* loading / error / empty states */
     .loading-state, .error-state, .empty-state {
       padding: 64px 0;
@@ -95,7 +118,7 @@
     <a href="index.html" class="nav-logo">Beat <span>the Bots</span> Daily</a>
     <ul class="nav-links">
       <li><a href="standings.html">Standings</a></li>
-      <li><a href="today.html">Today</a></li>
+      <li><a href="today.html">Results</a></li>
       <li><a href="episodes.html" class="active">Episodes</a></li>
       <li><a href="models.html">Models</a></li>
     </ul>
@@ -121,18 +144,41 @@
           <div class="loading-state">Loading latest episode…</div>
         </div>
 
-        <!-- FILTER + GRID -->
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
-          <span class="label" style="margin-bottom:0;">All Episodes</span>
-          <div class="filter-bar">
-            <button class="filter-btn active" onclick="filterEps(this,'all')">All</button>
-            <button class="filter-btn" onclick="filterEps(this,'wordle')">Wordle</button>
-            <button class="filter-btn" onclick="filterEps(this,'connections')">Connections</button>
-            <button class="filter-btn" onclick="filterEps(this,'strands')">Strands</button>
-            <button class="filter-btn" onclick="filterEps(this,'keyword')">Keyword</button>
+        <!-- FILTERS -->
+        <div class="filter-rows">
+
+          <!-- Row 1: label + game filter -->
+          <div class="filter-row">
+            <span class="label" style="margin-bottom:0;">All Episodes</span>
+            <div class="filter-bar" id="game-filter">
+              <button class="filter-btn active" onclick="setFilter('game','all',this)">All</button>
+              <button class="filter-btn" onclick="setFilter('game','wordle',this)">Wordle</button>
+              <button class="filter-btn" onclick="setFilter('game','connections',this)">Connections</button>
+              <button class="filter-btn" onclick="setFilter('game','strands',this)">Strands</button>
+              <button class="filter-btn" onclick="setFilter('game','keyword',this)">Keyword</button>
+            </div>
           </div>
+
+          <!-- Row 2: model filter (built dynamically) -->
+          <div class="filter-row">
+            <div class="filter-bar" id="model-filter">
+              <button class="filter-btn active" onclick="setFilter('model','all',this)">All Models</button>
+              <!-- model buttons added by JS after data loads -->
+            </div>
+          </div>
+
+          <!-- Row 3: time filter -->
+          <div class="filter-row">
+            <div class="filter-bar" id="time-filter">
+              <button class="filter-btn active" onclick="setFilter('time','all',this)">All Time</button>
+              <button class="filter-btn" onclick="setFilter('time','week',this)">This Week</button>
+              <button class="filter-btn" onclick="setFilter('time','lastweek',this)">Last Week</button>
+            </div>
+          </div>
+
         </div>
 
+        <!-- GRID -->
         <div id="episodes-grid-container">
           <div class="loading-state">Loading episodes…</div>
         </div>
@@ -152,6 +198,8 @@
 
   <script src="js/config.js"></script>
   <script>
+    // ── Constants ─────────────────────────────────────────────────────────────
+    const PAGE_SIZE = 12;
     const DISPLAY_NAMES = { 'GPT-5.2': 'GPT-4o' };
     function dName(raw) { return DISPLAY_NAMES[raw] || raw; }
 
@@ -179,9 +227,49 @@
       return `${img}<div class="ep-play" style="${playSize}"><div class="ep-tri" style="${triStyle}"></div></div>`;
     }
 
-    // ── All videos data (stored for filtering) ────────────────────────────────
+    // ── State ─────────────────────────────────────────────────────────────────
     let allVideos = [];
-    let activeFilter = 'all';
+    let displayedCount = PAGE_SIZE;
+    let activeFilters = { game: 'all', model: 'all', time: 'all' };
+
+    // ── Filter logic ──────────────────────────────────────────────────────────
+    function setFilter(type, value, btn) {
+      document.querySelectorAll('#' + type + '-filter .filter-btn')
+        .forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeFilters[type] = value;
+      displayedCount = PAGE_SIZE;
+      renderFiltered();
+    }
+
+    function getFilteredVideos() {
+      return allVideos.filter(v => {
+        // Game filter
+        if (activeFilters.game !== 'all' && v.game_type !== activeFilters.game) return false;
+        // Model filter: specific model hides comparison videos
+        if (activeFilters.model !== 'all') {
+          if (v.is_comparison || v.model_name !== activeFilters.model) return false;
+        }
+        // Time filter
+        if (activeFilters.time !== 'all') {
+          const dateStr = v.game_date || (v.published_at ? v.published_at.split('T')[0] : null);
+          if (dateStr) {
+            const [y, mo, d] = dateStr.split('-').map(Number);
+            const videoDay = new Date(y, mo - 1, d);
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const diffDays = Math.round((today - videoDay) / 86400000);
+            if (activeFilters.time === 'week' && diffDays > 7) return false;
+            if (activeFilters.time === 'lastweek' && (diffDays <= 7 || diffDays > 14)) return false;
+          }
+        }
+        return true;
+      });
+    }
+
+    function renderFiltered() {
+      renderGrid(getFilteredVideos());
+    }
 
     // ── Featured section ──────────────────────────────────────────────────────
     function renderFeatured(v) {
@@ -206,7 +294,7 @@
         </div>`;
     }
 
-    // ── Episodes grid ─────────────────────────────────────────────────────────
+    // ── Grid + Load More ──────────────────────────────────────────────────────
     function playVideo(cardEl, embedUrl, title) {
       const thumb = cardEl.querySelector('.ep-thumb');
       thumb.innerHTML = `<iframe src="${embedUrl}?rel=0&modestbranding=1&autoplay=1"
@@ -220,43 +308,46 @@
     }
 
     function renderGrid(videos) {
+      const container = document.getElementById('episodes-grid-container');
+
       if (!videos.length) {
-        document.getElementById('episodes-grid-container').innerHTML =
-          `<div class="empty-state">No episodes yet for this game type</div>`;
+        container.innerHTML = `<div class="empty-state">No episodes for this selection</div>`;
         return;
       }
-      const cards = videos.map(v => `
-        <div class="ep-card" data-embed="${v.embed_url}" data-title="${v.title}" data-type="${v.game_type || 'other'}">
+
+      const slice = videos.slice(0, displayedCount);
+      const cards = slice.map(v => `
+        <div class="ep-card" data-embed="${v.embed_url}" data-title="${v.title}">
           <div class="ep-thumb">${thumbHTML(v, false)}</div>
           <div class="ep-type">${epTypeLabel(v)}</div>
           <div class="ep-title">${v.title.split(' | ')[0]}</div>
           <div class="ep-date">${fmtDate(v.game_date || v.published_at)}</div>
         </div>`).join('');
-      document.getElementById('episodes-grid-container').innerHTML =
-        `<div class="episodes-grid">${cards}</div>`;
 
-      // Attach click handlers
-      document.querySelectorAll('#episodes-grid-container .ep-card').forEach(card => {
+      const remaining = videos.length - displayedCount;
+      const loadMoreHTML = remaining > 0 ? `
+        <div class="load-more-wrap">
+          <button class="load-more-btn" onclick="loadMore()">
+            Load More <span class="load-more-count">(${remaining} more)</span>
+          </button>
+        </div>` : '';
+
+      container.innerHTML = `<div class="episodes-grid">${cards}</div>${loadMoreHTML}`;
+
+      container.querySelectorAll('.ep-card').forEach(card => {
         card.addEventListener('click', () => {
           playVideo(card, card.dataset.embed, card.dataset.title);
         });
       });
     }
 
-    // ── Filter handler ────────────────────────────────────────────────────────
-    function filterEps(btn, type) {
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      activeFilter = type;
-      const filtered = type === 'all'
-        ? allVideos
-        : allVideos.filter(v => v.game_type === type);
-      renderGrid(filtered);
+    function loadMore() {
+      displayedCount += PAGE_SIZE;
+      renderFiltered();
     }
 
     // ── Init ──────────────────────────────────────────────────────────────────
     async function init() {
-      // Load all videos
       try {
         const data = await apiFetch('/api/videos');
         allVideos = data.videos;
@@ -266,7 +357,20 @@
         if (featured) renderFeatured(featured);
         else document.getElementById('featured-container').innerHTML = '';
 
-        renderGrid(allVideos);
+        // Build model filter buttons from actual data
+        const modelBar = document.getElementById('model-filter');
+        const modelNames = [...new Set(
+          allVideos.filter(v => v.model_name && !v.is_comparison).map(v => v.model_name)
+        )].sort();
+        modelNames.forEach(rawName => {
+          const btn = document.createElement('button');
+          btn.className = 'filter-btn';
+          btn.textContent = dName(rawName);
+          btn.onclick = function() { setFilter('model', rawName, this); };
+          modelBar.appendChild(btn);
+        });
+
+        renderFiltered();
       } catch (_) {
         document.getElementById('featured-container').innerHTML = '';
         document.getElementById('episodes-grid-container').innerHTML = `

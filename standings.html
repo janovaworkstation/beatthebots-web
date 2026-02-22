@@ -75,7 +75,7 @@
     <a href="index.html" class="nav-logo">Beat <span>the Bots</span> Daily</a>
     <ul class="nav-links">
       <li><a href="standings.html" class="active">Standings</a></li>
-      <li><a href="today.html">Today</a></li>
+      <li><a href="today.html">Results</a></li>
       <li><a href="episodes.html">Episodes</a></li>
       <li><a href="models.html">Models</a></li>
     </ul>
@@ -275,7 +275,7 @@
         footerLink = `<a href="models.html">View model profiles →</a>`;
       } else {
         footerLabel = `${fmtDate(data.week_start)} – ${fmtDate(data.week_end)}`;
-        footerLink = `<a href="today.html">Today's results →</a>`;
+        footerLink = `<a href="today.html">Yesterday's results →</a>`;
       }
 
       const tableRows = data.standings.map(m => {
