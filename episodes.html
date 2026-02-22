@@ -29,7 +29,7 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 20px;
     }
-    .ep-card { cursor: pointer; }
+    .ep-card { cursor: pointer; text-decoration: none; display: block; }
     .ep-thumb {
       width: 100%; aspect-ratio: 16/9;
       background: var(--bg-elevated);
@@ -39,6 +39,7 @@
       transition: border-color 0.2s;
     }
     .ep-card:hover .ep-thumb { border-color: var(--gold-dim); }
+    .ep-thumb img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
     .ep-thumb-bg { position: absolute; inset: 0; background: linear-gradient(135deg, var(--bg-elevated), #2A1810); }
     .ep-play {
       position: relative; z-index: 1;
@@ -64,7 +65,20 @@
     .ep-featured-label { font-family: 'Courier Prime', monospace; font-size: 10px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
     .ep-featured-title { font-family: 'Playfair Display', serif; font-size: 28px; font-weight: 700; color: var(--cream); line-height: 1.2; margin-bottom: 10px; }
     .ep-featured-date { font-family: 'Courier Prime', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 16px; }
-    .ep-featured-desc { font-size: 16px; color: var(--cream-dim); line-height: 1.6; }
+
+    /* loading / error / empty states */
+    .loading-state, .error-state, .empty-state {
+      padding: 64px 0;
+      text-align: center;
+      font-family: 'Courier Prime', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    .loading-state { color: var(--muted); }
+    .error-state { color: var(--gold-dim); }
+    .error-state strong { display: block; color: var(--cream-dim); font-size: 14px; margin-bottom: 8px; letter-spacing: 0.1em; }
+    .empty-state { color: var(--muted); }
 
     @media (max-width: 900px) {
       .episodes-grid { grid-template-columns: repeat(2, 1fr); }
@@ -101,27 +115,17 @@
     <div class="band band-dark">
       <div class="inner">
 
-        <!-- FEATURED -->
+        <!-- FEATURED (latest comparison video) -->
         <span class="label" style="margin-bottom:20px;">Latest</span>
-        <div class="ep-featured">
-          <div class="ep-thumb bracketed">
-            <div class="ep-thumb-bg"></div>
-            <div class="ep-play"><div class="ep-tri"></div></div>
-          </div>
-          <div>
-            <div class="ep-featured-label">Daily Recap</div>
-            <div class="ep-featured-title">Today's Rankings — Feb 21, 2026</div>
-            <div class="ep-featured-date">Feb 21, 2026 · 8 min</div>
-            <div class="ep-featured-desc">Sophia breaks down all four games from today. Claude tops the leaderboard with 14 points, GPT-4o takes Wordle, and Gemini has a rough day on Connections.</div>
-          </div>
+        <div id="featured-container">
+          <div class="loading-state">Loading latest episode…</div>
         </div>
 
-        <!-- FILTER -->
+        <!-- FILTER + GRID -->
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
           <span class="label" style="margin-bottom:0;">All Episodes</span>
           <div class="filter-bar">
             <button class="filter-btn active" onclick="filterEps(this,'all')">All</button>
-            <button class="filter-btn" onclick="filterEps(this,'recap')">Recap</button>
             <button class="filter-btn" onclick="filterEps(this,'wordle')">Wordle</button>
             <button class="filter-btn" onclick="filterEps(this,'connections')">Connections</button>
             <button class="filter-btn" onclick="filterEps(this,'strands')">Strands</button>
@@ -129,72 +133,10 @@
           </div>
         </div>
 
-        <div class="episodes-grid">
-
-          <div class="ep-card" data-type="recap">
-            <div class="ep-thumb"><div class="ep-thumb-bg"></div><div class="ep-play"><div class="ep-tri"></div></div></div>
-            <div class="ep-type">Daily Recap</div>
-            <div class="ep-title">Today's Rankings — Feb 20, 2026</div>
-            <div class="ep-date">Feb 20, 2026</div>
-          </div>
-
-          <div class="ep-card" data-type="wordle">
-            <div class="ep-thumb"><div class="ep-thumb-bg"></div><div class="ep-play"><div class="ep-tri"></div></div></div>
-            <div class="ep-type">Wordle #981</div>
-            <div class="ep-title">GPT-4o Solves It in 3 — Can Anyone Match That?</div>
-            <div class="ep-date">Feb 20, 2026</div>
-          </div>
-
-          <div class="ep-card" data-type="connections">
-            <div class="ep-thumb"><div class="ep-thumb-bg"></div><div class="ep-play"><div class="ep-tri"></div></div></div>
-            <div class="ep-type">Connections #621</div>
-            <div class="ep-title">Gemini Stumbles — Four Bots Solve, One Doesn't</div>
-            <div class="ep-date">Feb 20, 2026</div>
-          </div>
-
-          <div class="ep-card" data-type="strands">
-            <div class="ep-thumb"><div class="ep-thumb-bg"></div><div class="ep-play"><div class="ep-tri"></div></div></div>
-            <div class="ep-type">Strands #407</div>
-            <div class="ep-title">Gemini Takes the Win With Just 5 Hints</div>
-            <div class="ep-date">Feb 20, 2026</div>
-          </div>
-
-          <div class="ep-card" data-type="keyword">
-            <div class="ep-thumb"><div class="ep-thumb-bg"></div><div class="ep-play"><div class="ep-tri"></div></div></div>
-            <div class="ep-type">Keyword #214</div>
-            <div class="ep-title">Four-Way Tie at 3/6 — A Perfectly Even Day</div>
-            <div class="ep-date">Feb 20, 2026</div>
-          </div>
-
-          <div class="ep-card" data-type="recap">
-            <div class="ep-thumb"><div class="ep-thumb-bg"></div><div class="ep-play"><div class="ep-tri"></div></div></div>
-            <div class="ep-type">Daily Recap</div>
-            <div class="ep-title">Today's Rankings — Feb 19, 2026</div>
-            <div class="ep-date">Feb 19, 2026</div>
-          </div>
-
-          <div class="ep-card" data-type="wordle">
-            <div class="ep-thumb"><div class="ep-thumb-bg"></div><div class="ep-play"><div class="ep-tri"></div></div></div>
-            <div class="ep-type">Wordle #980</div>
-            <div class="ep-title">Claude and Grok Both Nail It in 2</div>
-            <div class="ep-date">Feb 19, 2026</div>
-          </div>
-
-          <div class="ep-card" data-type="connections">
-            <div class="ep-thumb"><div class="ep-thumb-bg"></div><div class="ep-play"><div class="ep-tri"></div></div></div>
-            <div class="ep-type">Connections #620</div>
-            <div class="ep-title">The Purple Category Destroys Everyone</div>
-            <div class="ep-date">Feb 19, 2026</div>
-          </div>
-
-          <div class="ep-card" data-type="strands">
-            <div class="ep-thumb"><div class="ep-thumb-bg"></div><div class="ep-play"><div class="ep-tri"></div></div></div>
-            <div class="ep-type">Strands #406</div>
-            <div class="ep-title">Kimi K2.5 Surprises Everyone With a Clean Run</div>
-            <div class="ep-date">Feb 19, 2026</div>
-          </div>
-
+        <div id="episodes-grid-container">
+          <div class="loading-state">Loading episodes…</div>
         </div>
+
       </div>
     </div>
 
@@ -208,14 +150,105 @@
     <div class="footer-copy">&copy; 2026 Beat the Bots Daily</div>
   </footer>
 
+  <script src="js/config.js"></script>
   <script>
+    const DISPLAY_NAMES = { 'GPT-5.2': 'GPT-4o' };
+    function dName(raw) { return DISPLAY_NAMES[raw] || raw; }
+
+    const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    function fmtDate(iso) {
+      if (!iso) return '—';
+      const [y, m, d] = iso.split('-').map(Number);
+      return `${MONTHS[m-1]} ${d}, ${y}`;
+    }
+
+    function epTypeLabel(v) {
+      const game = v.game_type ? v.game_type.charAt(0).toUpperCase() + v.game_type.slice(1) : 'Video';
+      if (v.is_comparison) return `AI vs ${game}`;
+      return v.model_name ? `${dName(v.model_name)} · ${game}` : game;
+    }
+
+    function thumbHTML(v, large) {
+      const playSize = large ? 'width:56px;height:56px' : 'width:40px;height:40px';
+      const triStyle = large
+        ? 'border-top-width:10px;border-bottom-width:10px;border-left-width:17px'
+        : '';
+      const img = v.thumbnail_url
+        ? `<img src="${v.thumbnail_url}" alt="${v.title}" loading="lazy" />`
+        : '<div class="ep-thumb-bg"></div>';
+      return `${img}<div class="ep-play" style="${playSize}"><div class="ep-tri" style="${triStyle}"></div></div>`;
+    }
+
+    // ── All videos data (stored for filtering) ────────────────────────────────
+    let allVideos = [];
+    let activeFilter = 'all';
+
+    // ── Featured section ──────────────────────────────────────────────────────
+    function renderFeatured(v) {
+      document.getElementById('featured-container').innerHTML = `
+        <a class="ep-featured" href="${v.watch_url}" target="_blank" rel="noopener" style="text-decoration:none;">
+          <div class="ep-thumb bracketed">${thumbHTML(v, true)}</div>
+          <div>
+            <div class="ep-featured-label">${epTypeLabel(v)}</div>
+            <div class="ep-featured-title">${v.title.split(' | ')[0]}</div>
+            <div class="ep-featured-date">${fmtDate(v.game_date || v.published_at)}</div>
+          </div>
+        </a>`;
+    }
+
+    // ── Episodes grid ─────────────────────────────────────────────────────────
+    function renderGrid(videos) {
+      if (!videos.length) {
+        document.getElementById('episodes-grid-container').innerHTML =
+          `<div class="empty-state">No episodes yet for this game type</div>`;
+        return;
+      }
+      const cards = videos.map(v => `
+        <a class="ep-card" href="${v.watch_url}" target="_blank" rel="noopener" data-type="${v.game_type || 'other'}" data-comparison="${v.is_comparison ? '1' : '0'}">
+          <div class="ep-thumb">${thumbHTML(v, false)}</div>
+          <div class="ep-type">${epTypeLabel(v)}</div>
+          <div class="ep-title">${v.title.split(' | ')[0]}</div>
+          <div class="ep-date">${fmtDate(v.game_date || v.published_at)}</div>
+        </a>`).join('');
+      document.getElementById('episodes-grid-container').innerHTML =
+        `<div class="episodes-grid">${cards}</div>`;
+    }
+
+    // ── Filter handler ────────────────────────────────────────────────────────
     function filterEps(btn, type) {
       document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      document.querySelectorAll('.ep-card').forEach(card => {
-        card.style.display = (type === 'all' || card.dataset.type === type) ? 'block' : 'none';
-      });
+      activeFilter = type;
+      const filtered = type === 'all'
+        ? allVideos
+        : allVideos.filter(v => v.game_type === type);
+      renderGrid(filtered);
     }
+
+    // ── Init ──────────────────────────────────────────────────────────────────
+    async function init() {
+      // Load all videos
+      try {
+        const data = await apiFetch('/api/videos');
+        allVideos = data.videos;
+
+        // Featured = latest comparison video
+        const featured = allVideos.find(v => v.is_comparison);
+        if (featured) renderFeatured(featured);
+        else document.getElementById('featured-container').innerHTML = '';
+
+        renderGrid(allVideos);
+      } catch (_) {
+        document.getElementById('featured-container').innerHTML = '';
+        document.getElementById('episodes-grid-container').innerHTML = `
+          <div class="error-state">
+            <strong>Episodes unavailable</strong>
+            Check back soon
+          </div>`;
+      }
+    }
+
+    init();
   </script>
 
 </body>
