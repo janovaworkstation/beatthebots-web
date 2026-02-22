@@ -305,17 +305,49 @@
   </footer>
 
   <script>
-    document.getElementById('waitlist-btn').addEventListener('click', () => {
+    const CK_API_KEY = 't7CWFaTZ8rerK8mIrpTz5g';
+    const CK_FORM_ID = '9119762';
+
+    async function submitWaitlist(email) {
+      const res = await fetch(`https://api.convertkit.com/v3/forms/${CK_FORM_ID}/subscribe`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ api_key: CK_API_KEY, email }),
+      });
+      if (!res.ok) throw new Error('Subscribe failed');
+      return res.json();
+    }
+
+    document.getElementById('waitlist-btn').addEventListener('click', async () => {
       const input = document.getElementById('email-input');
       const btn   = document.getElementById('waitlist-btn');
-      if (input.value && input.value.includes('@')) {
-        btn.textContent = "You're on the list ✓";
-        btn.style.background = '#5DB87A';
-        input.disabled = btn.disabled = true;
-      } else {
+      const email = input.value.trim();
+
+      if (!email || !email.includes('@')) {
         input.style.borderColor = 'var(--grok)';
         input.focus();
+        return;
       }
+
+      btn.textContent = 'Joining…';
+      input.disabled = btn.disabled = true;
+
+      try {
+        await submitWaitlist(email);
+        btn.textContent = "You're on the list ✓";
+        btn.style.background = '#5DB87A';
+        document.querySelector('.waitlist-note').textContent =
+          "Check your inbox to confirm — we'll be in touch before April 2026.";
+      } catch (_) {
+        btn.textContent = 'Try again';
+        btn.style.background = 'var(--grok)';
+        input.disabled = btn.disabled = false;
+        input.style.borderColor = 'var(--grok)';
+      }
+    });
+
+    document.getElementById('email-input').addEventListener('keydown', e => {
+      if (e.key === 'Enter') document.getElementById('waitlist-btn').click();
     });
   </script>
 
