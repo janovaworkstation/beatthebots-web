@@ -67,6 +67,8 @@
     .loading-state { color: var(--muted); }
     .error-state { color: var(--gold-dim); }
     .error-state strong { display: block; color: var(--cream-dim); font-size: 14px; margin-bottom: 8px; letter-spacing: 0.1em; }
+    .error-state .retry-btn { margin-top: 16px; display: inline-block; background: none; border: 1px solid var(--gold-dim); color: var(--gold); font-family: 'Courier Prime', monospace; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; padding: 6px 16px; cursor: pointer; }
+    .error-state .retry-btn:hover { border-color: var(--gold); background: rgba(201,160,82,0.08); }
 
     @media (max-width: 900px) {
       .models-grid { grid-template-columns: repeat(3, 1fr); }
@@ -293,6 +295,7 @@
           <div class="error-state">
             <strong>Results unavailable</strong>
             Check back soon
+            <button class="retry-btn" onclick="loadModels()">Try Again</button>
           </div>`;
       }
     }
