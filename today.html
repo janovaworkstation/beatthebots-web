@@ -147,6 +147,7 @@
 
   <script src="js/config.js"></script>
   <script src="js/scoring.js"></script>
+  <script src="js/date-utils.js"></script>
   <script>
     const DISPLAY_NAMES = { 'GPT-5.2': 'GPT-4o' };
     function dName(raw) { return DISPLAY_NAMES[raw] || raw; }
@@ -250,7 +251,16 @@
 
     async function loadResults() {
       try {
-        const data = await apiFetch('/api/results/today');
+        // The page is "Yesterday" in America/New_York, regardless of the viewer's
+        // local timezone or the API server's timezone. Compute the intended game
+        // date client-side to avoid off-by-one errors around midnight.
+        const tz = 'America/New_York';
+        const gameDate = (window.BTBDateUtils?.yesterdayISOInTimeZone)
+          ? window.BTBDateUtils.yesterdayISOInTimeZone(new Date(), tz)
+          : null;
+
+        const path = gameDate ? `/api/results/${gameDate}` : '/api/results/today';
+        const data = await apiFetch(path);
         renderResults(data);
       } catch (_) {
         document.getElementById('games-grid-container').innerHTML = `
