@@ -146,6 +146,7 @@
   </footer>
 
   <script src="js/config.js"></script>
+  <script src="js/scoring.js"></script>
   <script>
     const DISPLAY_NAMES = { 'GPT-5.2': 'GPT-4o' };
     function dName(raw) { return DISPLAY_NAMES[raw] || raw; }
@@ -166,28 +167,33 @@
 
     function ptsClass(pts) {
       if (pts == null) return '';
-      if (pts >= 5) return 'score-good';
-      if (pts >= 3) return 'score-ok';
+      // Normalized scoring is 0–10.
+      if (pts >= 8) return 'score-good';
+      if (pts >= 6) return 'score-ok';
       return 'score-bad';
     }
 
     function gameScore(gameKey, r) {
+      const norm = (typeof BTBScoring !== 'undefined') ? BTBScoring.normalizeGame(gameKey, r) : r;
+      const pts = norm && norm.points != null ? norm.points : null;
+
       if (gameKey === 'wordle') {
-        if (r.solved) return { text: `${r.attempts_used}/6`, cls: ptsClass(r.points) };
+        if (r.solved) return { text: `${r.attempts_used}/6`, cls: ptsClass(pts) };
         return { text: 'X/6', cls: 'score-bad' };
       }
       if (gameKey === 'connections') {
-        return { text: r.solved ? 'Solved ✓' : 'Failed ✗', cls: r.solved ? 'score-good' : 'score-bad' };
+        // Keep the win/loss label, but colorize using normalized points.
+        return { text: r.solved ? 'Solved ✓' : 'Failed ✗', cls: ptsClass(pts) };
       }
       if (gameKey === 'strands') {
         if (r.solved) return { text: 'Solved ✓', cls: 'score-good' };
-        if (r.points > 0) return { text: `${r.points} pts`, cls: ptsClass(r.points) };
+        if ((pts || 0) > 0) return { text: `${pts} pts`, cls: ptsClass(pts) };
         return { text: 'Failed ✗', cls: 'score-bad' };
       }
       if (gameKey === 'keyword') {
         if (!r.solved) return { text: 'Failed', cls: 'score-bad' };
-        if (r.attempts_used <= 6) return { text: `${r.attempts_used}/6`, cls: ptsClass(r.points) };
-        return { text: `${r.points} pts`, cls: ptsClass(r.points) };
+        if (r.attempts_used != null && r.attempts_used <= 6) return { text: `${r.attempts_used}/6`, cls: ptsClass(pts) };
+        return { text: `${pts} pts`, cls: ptsClass(pts) };
       }
       return { text: '—', cls: '' };
     }

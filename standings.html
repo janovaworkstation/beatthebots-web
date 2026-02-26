@@ -133,6 +133,7 @@
   </footer>
 
   <script src="js/config.js"></script>
+  <script src="js/scoring.js"></script>
   <script>
     // ── Display name overrides (DB name → site label) ─────────────────────────
     const DISPLAY_NAMES = { 'GPT-5.2': 'GPT-4o' };
@@ -141,8 +142,9 @@
     // ── Score CSS class helpers ───────────────────────────────────────────────
     function ptsClass(pts) {
       if (pts == null) return '';
-      if (pts >= 5) return 'score-good';
-      if (pts >= 3) return 'score-ok';
+      // Normalized scoring is 0–10.
+      if (pts >= 8) return 'score-good';
+      if (pts >= 6) return 'score-ok';
       return 'score-bad';
     }
 
@@ -220,7 +222,7 @@
           <div class="lb-score ${fc.cls}">${fc.text}</div>
           <div class="lb-score ${fs.cls}">${fs.text}</div>
           <div class="lb-score ${fk.cls}">${fk.text}</div>
-          <div class="lb-total">${m.total_points}</div>
+          <div class="lb-total">${m.avg_points.toFixed(1)}</div>
         </div>`;
       }).join('');
 
@@ -262,11 +264,11 @@
             <span style="text-align:center">Connections</span>
             <span style="text-align:center">Strands</span>
             <span style="text-align:center">Keyword</span>
-            <span style="text-align:right">Pts</span>
+            <span style="text-align:right">Avg Pts</span>
           </div>
           ${tableRows}
           <div class="table-footer">
-            <span>${fmtDate(data.date)} · Points = 7 − attempts</span>
+            <span>${fmtDate(data.date)} · Avg Pts = total ÷ games (0–10 normalized)</span>
             <a href="today.html">Full game results →</a>
           </div>
         </div>
@@ -287,13 +289,13 @@
       }
 
       const tableRows = data.standings.map(m => {
-        const avg = m.avg_points_per_day;
-        const avgCls = avg >= 20 ? 'score-good' : avg >= 15 ? 'score-ok' : 'score-bad';
+        const avg = m.avg_points;
+        const avgCls = avg >= 8 ? 'score-good' : avg >= 6 ? 'score-ok' : 'score-bad';
         const rc = m.rank === 1 ? 'data rank-1' : 'data';
         return `<div class="lb-row lb-row-agg ${rc}">
           ${rankEl(m.rank)}
           ${modelCell(m)}
-          <div class="lb-score">${m.days_played}d</div>
+          <div class="lb-score">${m.games_played}g</div>
           <div class="lb-score">${m.total_points} pts</div>
           <div class="lb-total ${avgCls}">${avg.toFixed(1)}</div>
         </div>`;
@@ -303,9 +305,9 @@
         <div class="lb-table bracketed">
           <div class="lb-row lb-row-agg header">
             <span>#</span><span>Model</span>
-            <span style="text-align:center">Days</span>
+            <span style="text-align:center">Games</span>
             <span style="text-align:center">Total Pts</span>
-            <span style="text-align:right">Avg / Day</span>
+            <span style="text-align:right">Avg Pts</span>
           </div>
           ${tableRows}
           <div class="table-footer">
@@ -334,7 +336,11 @@
         'alltime-lb': '/api/standings/alltime'
       };
       try {
-        const data = await apiFetch(endpoints[panelId]);
+        let data = await apiFetch(endpoints[panelId]);
+        // Normalize scoring + derived stats at the website layer.
+        if (panelId === 'today-lb') data = BTBScoring.normalizeTodayPayload(data);
+        else data = BTBScoring.normalizeAggPayload(data);
+
         fetched[panelId] = true;
         if (panelId === 'today-lb') renderToday(data);
         else renderAgg(data, panelId);
