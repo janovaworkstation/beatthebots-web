@@ -1,5 +1,37 @@
 {
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [{ "type": "host", "value": "beatthebotsdaily.com" }],
+      "destination": "https://www.beatthebotsdaily.com/:path*",
+      "permanent": true
+    }
+  ],
   "rewrites": [
+    {
+      "source": "/standings",
+      "destination": "/standings.html"
+    },
+    {
+      "source": "/today",
+      "destination": "/today.html"
+    },
+    {
+      "source": "/episodes",
+      "destination": "/episodes.html"
+    },
+    {
+      "source": "/models",
+      "destination": "/models.html"
+    },
+    {
+      "source": "/privacy-policy",
+      "destination": "/privacy-policy.html"
+    },
+    {
+      "source": "/terms-of-service",
+      "destination": "/terms-of-service.html"
+    },
     {
       "source": "/api/:path*",
       "destination": "https://claws-mac-mini.tail9b4f09.ts.net/api/api/:path*"
