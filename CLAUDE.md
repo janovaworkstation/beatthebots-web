@@ -1,192 +1,109 @@
-# Beat the Bots Daily — Web Project Briefing
-
-This file is read by Claude Code at the start of every session. It contains everything needed to work on this project without re-explaining context.
+# Beat the Bots Daily — Web
+# CLAUDE.md — Guidance for Claude Code
 
 ---
 
 ## What This Is
 
-**Beat the Bots Daily** is a YouTube channel and upcoming mobile app where five frontier AI models compete daily in word games: Wordle, Connections, Strands, and Keyword. A fully automated Python pipeline runs the games every night at midnight and stores results in a database on the Mac Mini.
+Static HTML website at beatthebotsdaily.com. Public destination for daily AI word game
+competition results, leaderboard standings, YouTube episode archive, and AI model profiles.
+Also serves as waitlist capture for the upcoming mobile app (Expo, targeting April 2026).
 
-This repo is the **public website** at beatthebotsdaily.com. It serves as:
-- A landing page and waitlist capture for the app (launching April 2026)
-- A daily-return destination for visitors who want to check standings and results
-- A hub for the YouTube episode archive
-- A showcase of each AI model's stats and personality
-
-The app is a separate project (Expo / React Native, not in this repo).
+All data comes from a FastAPI server on the Mac Mini via Tailscale. The website is
+read-only — it never writes to the Mac Mini. The mobile app is a separate project (not
+in this repo).
 
 ---
 
-## The Five AI Models
+## Architecture Overview
 
-| Model | Provider | Color | Personality |
-|-------|----------|-------|-------------|
-| Claude | Anthropic | `#7BA7D4` | Methodical, thoughtful |
-| GPT-4o | OpenAI | `#5DB87A` | Confident, direct |
-| Gemini | Google | `#5BAFC9` | Analytical, broad |
-| Grok | xAI | `#E06B6B` | Edgy, unpredictable |
-| Kimi K2.5 | Moonshot AI | `#A98FD4` | The wildcard challenger |
-
----
-
-## Site Structure
-
-Five pages, all sharing the same nav and footer:
-
-| File | URL | Purpose | Returns daily? |
-|------|-----|---------|----------------|
-| `index.html` | `/` | Home — pitch, waitlist, site explainer | No |
-| `standings.html` | `/standings` | Full leaderboard — Today / This Week / All Time | Yes — bookmark page |
-| `today.html` | `/today` | Today's game results + today's episode embed | Yes |
-| `episodes.html` | `/episodes` | Full YouTube episode archive with game filter | Weekly |
-| `models.html` | `/models` | AI model profiles with stats and records | Occasionally |
+- **Language/runtime:** HTML5 / CSS3 / Vanilla JS — no build step, no framework, no Node dependencies
+- **Architecture pattern:** Static site with client-side data loading. All API calls go through `apiFetch()` in `js/config.js` which routes to the Mac Mini API.
+- **Philosophy:** Zero build tooling. A file open in the browser IS the deployed artifact. Maximum simplicity.
+- **Data storage:** None — all data lives on the Mac Mini. The website fetches and renders.
+- **Key external dependencies:** Mac Mini FastAPI (game results, standings, model stats), Vercel (hosting + API proxy), Google Analytics 4, Google Fonts, ConvertKit (waitlist), YouTube (episode embeds)
+- **Production routing:** Vercel rewrites `/api/*` → Mac Mini via Tailscale Funnel (`claws-mac-mini.tail9b4f09.ts.net`). Configured in `vercel.json`.
 
 ---
 
-## Design System
+## Key Files and Responsibilities
 
-### Color Palette (CSS Variables)
-```css
---bg:          #160C08   /* very dark warm brown — page background */
---bg-card:     #1E1109   /* slightly lighter — card backgrounds */
---bg-elevated: #261510   /* elevated elements, row hovers */
---gold:        #C9A052   /* primary accent — headlines, CTAs, active states */
---gold-light:  #E8C47A   /* hover state for gold elements */
---gold-dim:    #7A5E28   /* muted gold — borders, decorative */
---cream:       #F2E8D5   /* primary text */
---cream-dim:   #B8A98A   /* secondary text, descriptions */
---muted:       #5C4835   /* tertiary text, borders, labels */
-```
-
-### Typography
-- **Headlines:** Playfair Display (serif, Google Fonts) — weights 700 and 900
-- **Labels / UI:** Courier Prime (monospace, Google Fonts) — all caps, wide letter-spacing
-- **Body:** EB Garamond (serif, Google Fonts)
-
-### Design Motifs
-- Thin **corner bracket** decorations on cards (CSS pseudo-elements)
-- **Gold gradient rules** as section dividers
-- Alternating **dark / raised** section bands to create visual separation
-- Model identity always shown as a **colored dot** + name
-
-### Key Rule
-Never use Inter, Roboto, Arial, or system fonts. Never use purple gradients on white backgrounds. The aesthetic is warm, cinematic, editorial — like a premium sports broadcast crossed with a literary magazine.
+| File | Responsibility |
+|------|---------------|
+| `css/shared.css` | All CSS variables, typography, nav, grid, design system — single source of truth |
+| `js/config.js` | `apiFetch()` wrapper — local dev vs prod routing, retry logic, timeout handling |
+| `js/date-utils.js` | Timezone-safe date logic — America/New_York calendar boundaries vs UTC |
+| `js/scoring.js` | 0–10 point normalization for all four games, leaderboard ranking |
+| `vercel.json` | Vercel rewrites config — maps `/api/*` to Mac Mini Tailscale Funnel in production |
+| `scripts/testDateUtils.js` | Unit tests for date-utils.js (run with Node) |
+| `scripts/testScoring.js` | Unit tests for scoring.js (run with Node) |
+| `index.html` | Home — pitch, model pills, waitlist CTA |
+| `standings.html` | Leaderboard — Today / This Week / All Time tabs |
+| `today.html` | Daily results cards + YouTube episode embed |
+| `episodes.html` | Full YouTube episode archive with game/date filters |
+| `models.html` | AI model profiles with stats and records |
 
 ---
 
-## Shared Styles
+## Architecture Rules and Constraints
 
-All shared CSS lives inline in each HTML file for now, duplicated from `/tmp/shared_styles.css` during scaffolding. 
-
-**First refactor task:** extract shared styles to `/css/shared.css` and link it from all five pages. This will make future changes much easier — one file to update instead of five.
-
----
-
-## Navigation
-
-The nav is identical on all five pages. The active page gets `class="active"` on its nav link, which applies a gold bottom border. The nav CTA always links to `index.html#waitlist`.
-
-```html
-<nav>
-  <a href="index.html" class="nav-logo">Beat <span>the Bots</span> Daily</a>
-  <ul class="nav-links">
-    <li><a href="standings.html">Standings</a></li>
-    <li><a href="today.html">Today</a></li>
-    <li><a href="episodes.html">Episodes</a></li>
-    <li><a href="models.html">Models</a></li>
-  </ul>
-  <a href="index.html#waitlist" class="nav-cta">Join Waitlist</a>
-  <button class="nav-hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
-</nav>
-```
+- **All API calls must go through `apiFetch()` in `js/config.js`.** Never use raw `fetch()` with hardcoded URLs. `apiFetch()` handles local dev vs production routing automatically.
+- **No build step, no npm, no frameworks.** Do not introduce webpack, Vite, React, or any build tooling. The site must remain deployable by pushing static files to GitHub.
+- **All shared styles live in `css/shared.css`.** Never duplicate styles inline across pages. If a style appears on more than one page, it belongs in shared.css.
+- **The five model colors are canonical — do not change them:**
+  - Claude: `#7BA7D4`, GPT-4o: `#5DB87A`, Gemini: `#5BAFC9`, Grok: `#E06B6B`, Kimi K2.5: `#A98FD4`
+- **Scoring normalization (0–10 scale) is defined in `js/scoring.js`.** Do not modify the formula without running `node scripts/testScoring.js` first and updating all callers.
+- **JS utility modules (`js/`) must remain UMD-compatible** — they are tested in Node via the `scripts/test*.js` harnesses. Do not use ES module `import`/`export` syntax.
+- Typography stack is fixed: Playfair Display (headlines), Courier Prime (labels/UI), EB Garamond (body). Never substitute system fonts.
 
 ---
 
-## Data — What's Real vs Mock
+## Security Rules
 
-**Currently all data is hardcoded mock data.** The real data lives in a database on the Mac Mini and needs to be wired in via API.
-
-### Scoring System
-- **Daily points:** `7 - attempts_used` for solved games; `0` for failed games
-- **All-time:** weighted average (lower raw score = better performance; failed games receive maximum penalty)
-- Ties remain ties — no tiebreakers
-
-### The Mac Mini API
-The Mac Mini runs the automated Python game pipeline and hosts the database. A lightweight **FastAPI** server needs to be built on the Mac Mini to expose read-only endpoints for the website.
-
-**Network setup:**
-- Mac Mini and MacBook Pro are both on a **Tailscale** private network
-- During local development on MacBook Pro: API calls go directly to Mac Mini via Tailscale IP
-- In production (Vercel): API calls go to Mac Mini via **Tailscale Funnel** (public HTTPS endpoint, no open router ports)
-
-### API Endpoints Needed (to be built)
-```
-GET /api/standings/today        → all 5 models, all 4 games, today's points
-GET /api/standings/week         → 7-day aggregate per model
-GET /api/standings/alltime      → all-time averages per model
-GET /api/results/today          → per-game results for today
-GET /api/results/{date}         → per-game results for a specific date
-GET /api/models                 → model metadata and all-time stats
-GET /api/models/{model_id}      → single model profile with full history
-```
+- `.env` contains only the local dev API base URL (`API_BASE_URL=http://claws-mac-mini:8100`) — git-ignored, never commit it.
+- The website is read-only. No mutations reach the Mac Mini API. The only POST is the ConvertKit waitlist form, which goes directly to ConvertKit.
+- Never add API keys to client-side JS — all credentials are server-side (Mac Mini or Vercel env vars).
 
 ---
 
-## Infrastructure
+## Development Commands
 
-| Layer | Tool | Status |
-|-------|------|--------|
-| Game pipeline | Python (Mac Mini) | Live |
-| Database | Mac Mini | Live |
-| API server | FastAPI (Mac Mini) | To be built |
-| Tailscale tunnel | Tailscale Funnel | To be configured |
-| Website hosting | Vercel | To be connected |
-| Domain | beatthebotsdaily.com | Owned, to be pointed at Vercel |
-| Repo | GitHub | To be created |
+- **Local dev:** Open HTML files directly in browser — no server required for static content.
+- **With live API data:** Requires Tailscale connection to Mac Mini. `API_BASE_URL` in `.env` points to `http://claws-mac-mini:8100`.
+- **Run date utils tests:** `node scripts/testDateUtils.js`
+- **Run scoring tests:** `node scripts/testScoring.js`
+- **Deploy:** `git push origin main` — Vercel auto-deploys from main branch.
 
 ---
 
-## Deployment Workflow
+## Testing Standards
 
-```
-MacBook Pro (edit files)
-       ↓  git push
-   GitHub repo
-       ↓  auto-deploy (Vercel webhook)
-     Vercel
-       ↓  API calls
-Mac Mini via Tailscale Funnel
-```
+- Tests in: `scripts/testDateUtils.js`, `scripts/testScoring.js`
+- Run manually with Node before any change to `js/date-utils.js` or `js/scoring.js`.
+- No CI pipeline — tests are not automated. Do not skip them before pushing scoring or date logic changes.
+- Rule: No task touching `js/scoring.js` or `js/date-utils.js` is complete until both test files pass.
 
 ---
 
-## Current Priority Order
+## Code Style
 
-1. **Extract shared CSS** into `/css/shared.css` — makes everything easier
-2. **Build the FastAPI layer** on Mac Mini with the endpoints listed above
-3. **Configure Tailscale Funnel** on the API port
-4. **Wire standings.html** to real data first — highest daily value
-5. **Wire today.html** to real data second
-6. Wire remaining pages
-7. **Waitlist form** — connect to an actual email capture (Mailchimp, ConvertKit, or similar)
-8. **YouTube embeds** — replace placeholder thumbs with real iframes on today.html and episodes.html
+- No ES module syntax (`import`/`export`) in `js/` files — UMD pattern required for Node test compatibility.
+- CSS: always use variables from `css/shared.css` (`--bg`, `--gold`, `--cream`, etc.) — never hardcode color hex values in page files.
+- Design motif: corner brackets (CSS pseudo-elements), gold gradient rules, dark warm aesthetic (`#160C08` bg, `#C9A052` accent). Do not break from this aesthetic.
 
 ---
 
-## What Not to Change
+## Current Phase / Active Work
 
-- The color palette — it matches the YouTube channel branding exactly
-- The typography stack (Playfair Display / Courier Prime / EB Garamond)
-- The corner bracket motif on cards
-- The overall dark warm aesthetic
-
----
-
-## App vs Website
-
-The mobile app is a separate project (Expo / React Native, not in this repo). The website and app share the same Mac Mini database but are otherwise independent. The website does not need to replicate app features — it is a daily-return content destination and a waitlist capture tool.
+Production live at beatthebotsdaily.com. All five main pages wired to live Mac Mini API.
+Focus is stability and content freshness. Upcoming: mobile app (Expo) targeting April 2026 —
+website serves as public companion destination. Do not begin app features in this repo.
 
 ---
 
-*Last updated: February 2026*
+## Known Issues / Decisions
+
+- [2026-03] `today.html` shows **yesterday's** results (24-hour spoiler embargo) — this is intentional. `js/date-utils.js` implements the America/New_York timezone-safe yesterday calculation.
+- [2026-03] Scoring: 0–10 normalized per game. Wordle: 1 guess=10pts → 6 guesses=5pts, fail=0. Full formula in `js/scoring.js`. Legacy 0–7 Strands/Keyword scores scaled to 0–10.
+- [2026-03] `apiFetch()` uses 2 retries with exponential backoff and 8-second timeout per attempt. Adjust in `js/config.js` if API latency changes.
+- [2026-03] Previous CLAUDE.md (Feb 2026) was a pre-standard project briefing. Superseded by this restructured version aligned to the CIO reference guide.
