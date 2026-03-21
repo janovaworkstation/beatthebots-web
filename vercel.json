@@ -9,6 +9,10 @@
   ],
   "rewrites": [
     {
+      "source": "/sudoku",
+      "destination": "/sudoku.html"
+    },
+    {
       "source": "/standings",
       "destination": "/standings.html"
     },
