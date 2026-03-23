@@ -1,5 +1,6 @@
-# Beat the Bots Daily — Web
-# CLAUDE.md — Guidance for Claude Code
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ---
 
@@ -34,14 +35,17 @@ in this repo).
 | `js/config.js` | `apiFetch()` wrapper — local dev vs prod routing, retry logic, timeout handling |
 | `js/date-utils.js` | Timezone-safe date logic — America/New_York calendar boundaries vs UTC |
 | `js/scoring.js` | 0–10 point normalization for all four games, leaderboard ranking |
-| `vercel.json` | Vercel rewrites config — maps `/api/*` to Mac Mini Tailscale Funnel in production |
+| `vercel.json` | Vercel config — API proxy to Mac Mini, clean URL rewrites (`/standings` → `standings.html`), apex→www redirect |
 | `scripts/testDateUtils.js` | Unit tests for date-utils.js (run with Node) |
 | `scripts/testScoring.js` | Unit tests for scoring.js (run with Node) |
+| `scripts/ga4-report.js` | GA4 Data API reporting — requires `googleapis` npm package and service account key |
 | `index.html` | Home — pitch, model pills, waitlist CTA |
 | `standings.html` | Leaderboard — Today / This Week / All Time tabs |
 | `today.html` | Daily results cards + YouTube episode embed |
 | `episodes.html` | Full YouTube episode archive with game/date filters |
 | `models.html` | AI model profiles with stats and records |
+| `sudoku.html` | AI Sudoku Arena — interactive puzzle player with AI model replay/scoring (self-contained, ~52KB) |
+| `privacy-policy.html`, `terms-of-service.html` | Legal pages |
 
 ---
 
@@ -72,6 +76,7 @@ in this repo).
 - **With live API data:** Requires Tailscale connection to Mac Mini. `API_BASE_URL` in `.env` points to `http://claws-mac-mini:8100`.
 - **Run date utils tests:** `node scripts/testDateUtils.js`
 - **Run scoring tests:** `node scripts/testScoring.js`
+- **Run GA4 report:** `GA4_PROPERTY_ID=<numeric_id> node scripts/ga4-report.js` (requires `googleapis` package and service account key)
 - **Deploy:** `git push origin main` — Vercel auto-deploys from main branch.
 
 ---
