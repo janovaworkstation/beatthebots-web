@@ -158,17 +158,23 @@
     .how-card h3 { font-family: 'Playfair Display', serif; font-size: 21px; font-weight: 700; color: var(--cream); margin-bottom: 10px; }
     .how-card p { font-size: 16px; color: var(--cream-dim); line-height: 1.6; }
 
-    /* app callout */
+    /* app callout / youtube cta */
     .app-callout { padding: 64px; text-align: center; }
     .app-callout h2 { font-family: 'Playfair Display', serif; font-weight: 900; font-size: clamp(32px, 4vw, 54px); margin-bottom: 14px; }
-    .app-callout p { font-size: 18px; font-style: italic; color: var(--cream-dim); max-width: 500px; margin: 0 auto 40px; }
-    .badge-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
-    .store-badge { display: flex; align-items: center; gap: 10px; border: 1px solid var(--muted); padding: 12px 22px; text-decoration: none; transition: border-color 0.2s; }
-    .store-badge:hover { border-color: var(--gold-dim); }
-    .store-badge .icon { font-size: 20px; }
-    .store-badge .sub { font-family: 'Courier Prime', monospace; font-size: 9px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); display: block; }
-    .store-badge .name { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 700; color: var(--cream); display: block; }
+    .app-callout p { font-size: 18px; font-style: italic; color: var(--cream-dim); max-width: 500px; margin: 0 auto; }
     .app-note { margin-top: 14px; font-family: 'Courier Prime', monospace; font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); }
+    .yt-subscribe-btn {
+      display: inline-block;
+      background: #FF0000;
+      color: #fff;
+      font-family: 'Courier Prime', monospace;
+      font-size: 12px; letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-decoration: none;
+      padding: 16px 36px;
+      transition: background 0.2s;
+    }
+    .yt-subscribe-btn:hover { background: #cc0000; }
 
     @media (max-width: 768px) {
       #hero { padding: 100px 24px 80px; }
@@ -192,7 +198,7 @@
       <li><a href="episodes.html">Episodes</a></li>
       <li><a href="models.html">Models</a></li>
     </ul>
-    <a href="#waitlist" class="nav-cta">Join Waitlist</a>
+    <a href="https://www.youtube.com/@beatthebotsdaily?sub_confirmation=1" target="_blank" rel="noopener" class="nav-cta">Watch on YouTube</a>
     <button class="nav-hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
   </nav>
 
@@ -227,9 +233,9 @@
       <div id="waitlist" class="fade-up delay-4">
         <div class="waitlist-row">
           <input type="email" placeholder="your@email.com" id="email-input" />
-          <button id="waitlist-btn">Join the Waitlist</button>
+          <button id="waitlist-btn">Get Daily Updates</button>
         </div>
-        <div class="waitlist-note">App launching April 2026 &middot; Be first to know</div>
+        <div class="waitlist-note">Daily results &middot; Free forever</div>
       </div>
     </section>
 
@@ -308,30 +314,25 @@
           <div class="how-card">
             <div class="how-number">03</div>
             <h3>Then You Compete</h3>
-            <p>Log your own scores in the app and find out exactly where you rank. Did you beat Claude? Outperform GPT-4o? The scoreboard knows.</p>
+            <p>Compare your daily scores against the AI models. Did you beat Claude? Outperform GPT-4o? Find out exactly where you rank — coming to iOS &amp; Android.</p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- APP CALLOUT -->
+    <!-- YOUTUBE SUBSCRIBE CTA -->
     <div class="band band-raised">
       <div class="inner">
         <div class="card bracketed app-callout">
-          <span class="label">App Launching April 2026</span>
-          <h2 class="serif">Now <span class="gold">You Play</span></h2>
-          <p>Log your daily scores, compete against the AI models, challenge your friends — and find out once and for all if you're smarter than Claude.</p>
-          <div class="badge-row">
-            <a href="#waitlist" class="store-badge">
-              <span class="icon">🍎</span>
-              <div><span class="sub">Coming soon on the</span><span class="name">App Store</span></div>
-            </a>
-            <a href="#waitlist" class="store-badge">
-              <span class="icon">▶</span>
-              <div><span class="sub">Coming soon on</span><span class="name">Google Play</span></div>
+          <span class="label">New Episodes Every Morning</span>
+          <h2 class="serif">Never Miss a <span class="gold">Competition</span></h2>
+          <p>Four new videos drop every morning — Wordle, Connections, Strands, and Keyword. Subscribe free and watch the AIs compete daily.</p>
+          <div style="margin-top:32px;">
+            <a href="https://www.youtube.com/@beatthebotsdaily?sub_confirmation=1" target="_blank" rel="noopener" class="yt-subscribe-btn">
+              &#9654;&nbsp; Subscribe on YouTube — It's Free
             </a>
           </div>
-          <div class="app-note">Join the waitlist above &middot; April 2026</div>
+          <div class="app-note">4 new videos every morning &middot; 369+ episodes available</div>
         </div>
       </div>
     </div>
@@ -382,7 +383,7 @@
         btn.textContent = "You're on the list ✓";
         btn.style.background = '#5DB87A';
         document.querySelector('.waitlist-note').textContent =
-          "Check your inbox to confirm — we'll be in touch before April 2026.";
+          "Check your inbox to confirm — daily results and updates incoming.";
       } catch (_) {
         btn.textContent = 'Try again';
         btn.style.background = 'var(--grok)';
