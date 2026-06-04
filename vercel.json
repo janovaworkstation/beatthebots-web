@@ -38,7 +38,7 @@
     },
     {
       "source": "/api/:path*",
-      "destination": "https://claws-mac-mini.tail9b4f09.ts.net/api/api/:path*"
+      "destination": "https://claws-mac-mini.tail9b4f09.ts.net/api/:path*"
     },
     {
       "source": "/health",
