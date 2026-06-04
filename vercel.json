@@ -38,11 +38,11 @@
     },
     {
       "source": "/api/:path*",
-      "destination": "https://claws-mac-mini.tail9b4f09.ts.net/api/:path*"
+      "destination": "https://claws-mac-mini.tail9b4f09.ts.net/:path*"
     },
     {
       "source": "/health",
-      "destination": "https://claws-mac-mini.tail9b4f09.ts.net/api/health"
+      "destination": "https://claws-mac-mini.tail9b4f09.ts.net/health"
     }
   ]
 }
