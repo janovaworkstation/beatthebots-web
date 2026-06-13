@@ -64,9 +64,10 @@
   function keywordPoints(game) {
     if (!game) return null;
     if (game.solved === false) return 0;
-    if (game.attempts_used != null) return wordlePoints(game.attempts_used, true);
+    // Backend returns points on 0-7 scale; scale to 0-10
     if (game.points != null) return scaledPointsFromLegacy(game.points);
-    if (game.solved === true) return 10;
+    // Fallback: compute from score (0-1) directly
+    if (game.score != null) return clamp(Math.round(game.score * 10), 0, 10);
     return null;
   }
 
