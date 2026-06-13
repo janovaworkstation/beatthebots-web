@@ -63,7 +63,7 @@ test('normalizeTodayPayload recomputes totals + avg + rank', () => {
           wordle: { solved: true, attempts_used: 2 },       // 9
           connections: { solved: true, mistakes_used: 0 },  // 10
           strands: { solved: true },                        // 10
-          keyword: { solved: false }                        // 0
+          keyword: { solved: false, score: 0, points: 0 }   // 0
         }
       },
       {
@@ -76,7 +76,7 @@ test('normalizeTodayPayload recomputes totals + avg + rank', () => {
           wordle: { solved: true, attempts_used: 6 },       // 5
           connections: { solved: true, mistakes_used: 3 },  // 4
           strands: { solved: true },                        // 10
-          keyword: { solved: true, attempts_used: 1 }       // 10
+          keyword: { solved: true, attempts_used: 1, score: 6.0, points: 42 } // 10
         }
       }
     ]
