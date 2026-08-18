@@ -9,6 +9,10 @@
   ],
   "rewrites": [
     {
+      "source": "/results/:date/:game",
+      "destination": "/results.html"
+    },
+    {
       "source": "/sudoku",
       "destination": "/sudoku.html"
     },
