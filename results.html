@@ -26,7 +26,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=Courier+Prime:wght@400;700&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/shared.css" />
+  <link rel="stylesheet" href="/css/shared.css" />
   <style>
     .page-hero {
       padding: 56px 48px 48px;
@@ -231,8 +231,8 @@
     <div class="footer-copy">&copy; 2026 Beat the Bots Daily</div>
   </footer>
 
-  <script src="js/config.js"></script>
-  <script src="js/scoring.js"></script>
+  <script src="/js/config.js"></script>
+  <script src="/js/scoring.js"></script>
   <script>
     const DISPLAY_NAMES = { 'GPT-5.2': 'GPT-4o' };
     function dName(raw) { return DISPLAY_NAMES[raw] || raw; }
@@ -323,16 +323,47 @@
 
       const gameName = GAME_NAMES[gameKey] || gameKey;
       
-      // Sort results by normalized points descending
+      // Sort results by normalized points descending, then by attempts ascending (for tiebreaking)
       const sortedResults = [...gameData.results]
         .map(r => {
           const norm = BTBScoring.normalizeGame(gameKey, r);
           return { ...r, normalizedPoints: norm?.points ?? 0 };
         })
-        .sort((a, b) => b.normalizedPoints - a.normalizedPoints);
+        .sort((a, b) => {
+          // Primary: points descending
+          if (b.normalizedPoints !== a.normalizedPoints) {
+            return b.normalizedPoints - a.normalizedPoints;
+          }
+          // Tiebreaker: attempts ascending (lower attempts = better rank)
+          const aAttempts = a.attempts_used ?? Infinity;
+          const bAttempts = b.attempts_used ?? Infinity;
+          return aAttempts - bAttempts;
+        });
+
+      // Compute competition ranks (1224 style: tied scores share rank, next rank skips)
+      const ranks = [];
+      let currentRank = 1;
+      for (let i = 0; i < sortedResults.length; i++) {
+        if (i > 0) {
+          const prev = sortedResults[i - 1];
+          const curr = sortedResults[i];
+          // Check if this result is tied with the previous one
+          if (curr.normalizedPoints === prev.normalizedPoints && 
+              (curr.attempts_used ?? null) === (prev.attempts_used ?? null)) {
+            // Same rank as previous
+            ranks.push(ranks[i - 1]);
+          } else {
+            // New rank: current position + 1 (1-indexed)
+            currentRank = i + 1;
+            ranks.push(currentRank);
+          }
+        } else {
+          ranks.push(currentRank);
+        }
+      }
 
       const rows = sortedResults.map((r, idx) => {
-        const rank = idx + 1;
+        const rank = ranks[idx];
         const sc = gameScore(gameKey, r);
         const isHuman = r.provider === 'Human' || r.model_name === 'jlusenhop';
         
