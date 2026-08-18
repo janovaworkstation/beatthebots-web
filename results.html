@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Google Analytics 4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-N78X6Z2MJR"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag("js", new Date());
+    gtag("config", "G-N78X6Z2MJR");
+  </script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title id="page-title">Game Results — Beat the Bots Daily</title>
+  <meta name="description" id="page-description" content="See how AI models performed in today's word game challenge." />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Beat the Bots Daily" />
+  <meta property="og:title" id="og-title" content="Game Results — Beat the Bots Daily" />
+  <meta property="og:description" id="og-description" content="See how AI models performed in today's word game challenge." />
+  <meta property="og:url" id="og-url" content="https://beatthebotsdaily.com/" />
+  <meta property="og:image" content="https://beatthebotsdaily.com/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" id="twitter-title" content="Game Results — Beat the Bots Daily" />
+  <meta name="twitter:description" id="twitter-description" content="See how AI models performed in today's word game challenge." />
+  <meta name="twitter:image" content="https://beatthebotsdaily.com/og-image.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,400;1,700&family=Courier+Prime:wght@400;700&family=EB+Garamond:ital,wght@0,400;1,400&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/shared.css" />
+  <style>
+    .page-hero {
+      padding: 56px 48px 48px;
+      border-bottom: 1px solid var(--muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+    .page-hero-right { text-align: right; }
+    .page-hero-right .date-label {
+      font-family: 'Courier Prime', monospace;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--muted);
+    }
+    .page-hero-right .date-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--gold);
+    }
+
+    .game-result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 28px;
+    }
+    .game-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--cream);
+    }
+    .game-meta {
+      font-family: 'Courier Prime', monospace;
+      font-size: 9px;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: right;
+      line-height: 1.6;
+    }
+
+    .result-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 16px;
+      background: var(--bg-elevated);
+      margin-bottom: 8px;
+      border-left: 3px solid transparent;
+    }
+    .result-row:last-child { margin-bottom: 0; }
+    .result-row.human-row {
+      background: rgba(201,160,82,0.08);
+      border-left-color: var(--gold);
+    }
+
+    .result-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .result-rank {
+      font-family: 'Courier Prime', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      min-width: 40px;
+    }
+    .result-model {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Courier Prime', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--cream-dim);
+    }
+    .result-score {
+      font-family: 'Playfair Display', serif;
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .winner-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(201,160,82,0.12);
+      border: 1px solid var(--gold-dim);
+      padding: 3px 10px;
+      font-family: 'Courier Prime', monospace;
+      font-size: 9px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-left: 8px;
+    }
+
+    .view-all-link {
+      display: inline-block;
+      margin-top: 24px;
+      font-family: 'Courier Prime', monospace;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--gold);
+      text-decoration: none;
+      border-bottom: 1px solid var(--gold-dim);
+      padding-bottom: 2px;
+      transition: border-color 0.2s;
+    }
+    .view-all-link:hover { border-color: var(--gold); }
+
+    .loading-state, .error-state {
+      padding: 64px 0;
+      text-align: center;
+      font-family: 'Courier Prime', monospace;
+      font-size: 11px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+    .loading-state { color: var(--muted); }
+    .error-state { color: var(--gold-dim); }
+    .error-state strong {
+      display: block;
+      color: var(--cream-dim);
+      font-size: 14px;
+      margin-bottom: 8px;
+      letter-spacing: 0.1em;
+    }
+
+    @media (max-width: 768px) {
+      .page-hero {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+        padding: 56px 24px 32px;
+      }
+      .page-hero-right { text-align: left; }
+      .game-result-header {
+        flex-direction: column;
+        gap: 8px;
+      }
+      .game-meta { text-align: left; }
+      .result-rank { min-width: 32px; }
+      .result-row { padding: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav>
+    <a href="/" class="nav-logo">Beat <span>the Bots</span> Daily</a>
+    <ul class="nav-links">
+      <li><a href="/standings">Standings</a></li>
+      <li><a href="/today">Results</a></li>
+      <li><a href="/episodes">Episodes</a></li>
+      <li><a href="/models">Models</a></li>
+    </ul>
+    <a href="/#waitlist" class="nav-cta">Join Waitlist</a>
+    <button class="nav-hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
+  </nav>
+
+  <div class="page-content">
+
+    <div class="band band-dark">
+      <div class="page-hero inner">
+        <div>
+          <span class="label" id="result-label">Game Results</span>
+          <h1 class="page-title serif" id="game-name-title">Loading…</h1>
+        </div>
+        <div class="page-hero-right">
+          <div class="date-label" id="result-day">—</div>
+          <div class="date-value" id="result-date">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="band band-raised">
+      <div class="inner">
+        <div id="game-results-container">
+          <div class="loading-state">Loading results…</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    <a href="/" class="footer-logo">Beat <span>the Bots</span> Daily</a>
+    <ul class="footer-links">
+      <li><a href="https://www.youtube.com/@beatthebotsdaily" target="_blank" rel="noopener">YouTube</a></li>
+      <li><a href="/models">Models</a></li>
+      <li><a href="/privacy-policy">Privacy</a></li>
+      <li><a href="/terms-of-service">Terms</a></li>
+    </ul>
+    <div class="footer-copy">&copy; 2026 Beat the Bots Daily</div>
+  </footer>
+
+  <script src="js/config.js"></script>
+  <script src="js/scoring.js"></script>
+  <script>
+    const DISPLAY_NAMES = { 'GPT-5.2': 'GPT-4o' };
+    function dName(raw) { return DISPLAY_NAMES[raw] || raw; }
+
+    const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+    const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+    const GAME_NAMES = {
+      wordle: 'Wordle',
+      connections: 'Connections',
+      strands: 'Strands',
+      keyword: 'Keyword'
+    };
+
+    function fmtDate(iso) {
+      if (!iso) return '—';
+      const [y, m, d] = iso.split('-').map(Number);
+      return `${MONTHS[m-1]} ${d}, ${y}`;
+    }
+
+    function getDayName(iso) {
+      const [y, m, d] = iso.split('-').map(Number);
+      return DAYS[new Date(y, m - 1, d).getDay()];
+    }
+
+    function ptsClass(pts) {
+      if (pts == null) return '';
+      if (pts >= 8) return 'score-good';
+      if (pts >= 6) return 'score-ok';
+      return 'score-bad';
+    }
+
+    function gameScore(gameKey, r) {
+      const norm = (typeof BTBScoring !== 'undefined') ? BTBScoring.normalizeGame(gameKey, r) : r;
+      const pts = norm && norm.points != null ? norm.points : null;
+
+      if (gameKey === 'wordle') {
+        if (r.solved) return { text: `${r.attempts_used}/6`, cls: ptsClass(pts) };
+        return { text: 'X/6', cls: 'score-bad' };
+      }
+      if (gameKey === 'connections') {
+        return { text: r.solved ? 'Solved ✓' : 'Failed ✗', cls: ptsClass(pts) };
+      }
+      if (gameKey === 'strands') {
+        if (r.solved) return { text: 'Solved ✓', cls: 'score-good' };
+        if ((pts || 0) > 0) return { text: `${pts} pts`, cls: ptsClass(pts) };
+        return { text: 'Failed ✗', cls: 'score-bad' };
+      }
+      if (gameKey === 'keyword') {
+        if (!r.solved) return { text: 'Failed', cls: 'score-bad' };
+        if (r.attempts_used != null && r.attempts_used <= 6) return { text: `${r.attempts_used}/6`, cls: ptsClass(pts) };
+        return { text: `${pts} pts`, cls: ptsClass(pts) };
+      }
+      return { text: '—', cls: '' };
+    }
+
+    function publisherLabel(pub) {
+      if (pub === 'NYT') return 'New York Times';
+      if (pub === 'WaPo') return 'Washington Post';
+      return pub;
+    }
+
+    function parseURLPath() {
+      const path = window.location.pathname;
+      const match = path.match(/^\/results\/(\d{4}-\d{2}-\d{2})\/(wordle|connections|strands|keyword)\/?$/);
+      if (!match) return null;
+      return { date: match[1], game: match[2] };
+    }
+
+    function updateMetaTags(gameName, gameDate) {
+      const title = `${gameName} Results — ${fmtDate(gameDate)} | Beat the Bots Daily`;
+      const description = `See how Claude, GPT-4o, Gemini, Grok, and Kimi performed in ${gameName} on ${fmtDate(gameDate)}.`;
+      const url = `https://www.beatthebotsdaily.com${window.location.pathname}`;
+
+      document.getElementById('page-title').textContent = title;
+      document.getElementById('page-description').setAttribute('content', description);
+      document.getElementById('og-title').setAttribute('content', title);
+      document.getElementById('og-description').setAttribute('content', description);
+      document.getElementById('og-url').setAttribute('content', url);
+      document.getElementById('twitter-title').setAttribute('content', title);
+      document.getElementById('twitter-description').setAttribute('content', description);
+    }
+
+    function renderGameResult(gameKey, gameData, date, totalGames) {
+      if (!gameData || !gameData.results) {
+        return '<div class="error-state"><strong>No results found</strong>This game has no data for the selected date</div>';
+      }
+
+      const gameName = GAME_NAMES[gameKey] || gameKey;
+      
+      // Sort results by normalized points descending
+      const sortedResults = [...gameData.results]
+        .map(r => {
+          const norm = BTBScoring.normalizeGame(gameKey, r);
+          return { ...r, normalizedPoints: norm?.points ?? 0 };
+        })
+        .sort((a, b) => b.normalizedPoints - a.normalizedPoints);
+
+      const rows = sortedResults.map((r, idx) => {
+        const rank = idx + 1;
+        const sc = gameScore(gameKey, r);
+        const isHuman = r.provider === 'Human' || r.model_name === 'jlusenhop';
+        
+        let badge = '';
+        if (r.winner && !r.tied) badge = `<span class="winner-badge">Winner</span>`;
+        else if (r.winner && r.tied) badge = `<span class="winner-badge">Tied</span>`;
+
+        return `<div class="result-row ${isHuman ? 'human-row' : ''}">
+          <div class="result-left">
+            <div class="result-rank">#${rank} of ${sortedResults.length}</div>
+            <div class="result-model">
+              <div class="dot" style="background:${r.accent_color}"></div>
+              ${dName(r.model_name)}${badge}
+            </div>
+          </div>
+          <div class="result-score ${sc.cls}">${sc.text}</div>
+        </div>`;
+      }).join('');
+
+      const viewAllLink = totalGames > 1 
+        ? `<a href="/today" class="view-all-link">View all four games →</a>`
+        : '';
+
+      return `
+        <div class="game-result-header">
+          <div class="game-title">${gameName}</div>
+          <div class="game-meta">${publisherLabel(gameData.publisher)}</div>
+        </div>
+        <div class="card bracketed" style="padding:20px;">
+          ${rows}
+        </div>
+        ${viewAllLink}
+      `;
+    }
+
+    async function loadGameResult() {
+      const params = parseURLPath();
+      if (!params) {
+        document.getElementById('game-results-container').innerHTML = `
+          <div class="error-state">
+            <strong>Invalid URL</strong>
+            Please use the format: /results/YYYY-MM-DD/game
+          </div>`;
+        return;
+      }
+
+      const { date, game } = params;
+      const gameName = GAME_NAMES[game] || game;
+
+      document.getElementById('result-day').textContent = getDayName(date);
+      document.getElementById('result-date').textContent = fmtDate(date);
+      document.getElementById('game-name-title').textContent = gameName;
+      document.getElementById('result-label').textContent = fmtDate(date);
+
+      updateMetaTags(gameName, date);
+
+      try {
+        const data = await apiFetch(`/api/results/${date}`);
+        const gameData = data.games[game];
+        const totalGames = Object.keys(data.games).length;
+        
+        if (!gameData) {
+          document.getElementById('game-results-container').innerHTML = `
+            <div class="error-state">
+              <strong>Game not found</strong>
+              No ${gameName} results available for ${fmtDate(date)}
+            </div>`;
+          return;
+        }
+
+        document.getElementById('game-results-container').innerHTML = 
+          renderGameResult(game, gameData, date, totalGames);
+      } catch (err) {
+        document.getElementById('game-results-container').innerHTML = `
+          <div class="error-state">
+            <strong>Results unavailable</strong>
+            Unable to load ${gameName} results for ${fmtDate(date)}
+          </div>`;
+      }
+    }
+
+    loadGameResult();
+  </script>
+</body>
+</html>
