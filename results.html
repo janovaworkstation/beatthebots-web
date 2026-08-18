@@ -145,6 +145,54 @@
     }
     .view-all-link:hover { border-color: var(--gold); }
 
+    .you-sticky-bar {
+      position: sticky;
+      top: 64px;
+      z-index: 50;
+      background: var(--bg-elevated);
+      border: 1px solid var(--gold-dim);
+      border-left: 3px solid var(--gold);
+      padding: 12px 16px;
+      margin-bottom: 12px;
+      font-family: 'Courier Prime', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .jump-to-you-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 60;
+      background: var(--gold);
+      color: var(--bg);
+      border: none;
+      padding: 10px 16px;
+      font-family: 'Courier Prime', monospace;
+      font-size: 10px;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: all 0.3s;
+      opacity: 0;
+      pointer-events: none;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    }
+    .jump-to-you-btn.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .jump-to-you-btn:hover {
+      background: var(--gold-light);
+      transform: translateY(-2px);
+    }
+
     .loading-state, .error-state {
       padding: 64px 0;
       text-align: center;
@@ -178,6 +226,18 @@
       .game-meta { text-align: left; }
       .result-rank { min-width: 32px; }
       .result-row { padding: 12px; }
+      
+      .you-sticky-bar {
+        font-size: 10px;
+        padding: 10px 12px;
+      }
+      
+      .jump-to-you-btn {
+        bottom: 16px;
+        right: 16px;
+        padding: 9px 14px;
+        font-size: 9px;
+      }
     }
   </style>
 </head>
@@ -362,6 +422,10 @@
         }
       }
 
+      // Find human row
+      const humanIdx = sortedResults.findIndex(r => r.provider === 'Human' || r.model_name === 'jlusenhop');
+      const humanRank = humanIdx >= 0 ? ranks[humanIdx] : null;
+
       const rows = sortedResults.map((r, idx) => {
         const rank = ranks[idx];
         const sc = gameScore(gameKey, r);
@@ -371,7 +435,7 @@
         if (r.winner && !r.tied) badge = `<span class="winner-badge">Winner</span>`;
         else if (r.winner && r.tied) badge = `<span class="winner-badge">Tied</span>`;
 
-        return `<div class="result-row ${isHuman ? 'human-row' : ''}">
+        return `<div class="result-row ${isHuman ? 'human-row' : ''}" ${isHuman ? 'id="human-result-row"' : ''}>
           <div class="result-left">
             <div class="result-rank">#${rank} of ${sortedResults.length}</div>
             <div class="result-model">
@@ -383,6 +447,10 @@
         </div>`;
       }).join('');
 
+      const youStickyBar = humanRank 
+        ? `<div class="you-sticky-bar">You're #${humanRank} of ${sortedResults.length}</div>`
+        : '';
+
       const viewAllLink = totalGames > 1 
         ? `<a href="/today" class="view-all-link">View all four games →</a>`
         : '';
@@ -393,6 +461,7 @@
           <div class="game-meta">${publisherLabel(gameData.publisher)}</div>
         </div>
         <div class="card bracketed" style="padding:20px;">
+          ${youStickyBar}
           ${rows}
         </div>
         ${viewAllLink}
@@ -436,6 +505,9 @@
 
         document.getElementById('game-results-container').innerHTML = 
           renderGameResult(game, gameData, date, totalGames);
+
+        // Auto-scroll to human row and setup jump button
+        setupHumanRowScroll();
       } catch (err) {
         document.getElementById('game-results-container').innerHTML = `
           <div class="error-state">
@@ -443,6 +515,43 @@
             Unable to load ${gameName} results for ${fmtDate(date)}
           </div>`;
       }
+    }
+
+    function setupHumanRowScroll() {
+      const humanRow = document.getElementById('human-result-row');
+      if (!humanRow) return;
+
+      // Create jump button
+      const jumpBtn = document.createElement('button');
+      jumpBtn.className = 'jump-to-you-btn';
+      jumpBtn.textContent = 'You ↑';
+      jumpBtn.onclick = () => {
+        humanRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      };
+      document.body.appendChild(jumpBtn);
+
+      // Scroll to human row on load
+      setTimeout(() => {
+        humanRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 100);
+
+      // Show/hide jump button based on scroll position
+      function updateJumpBtnVisibility() {
+        const rect = humanRow.getBoundingClientRect();
+        const isVisible = rect.top >= 64 && rect.bottom <= window.innerHeight;
+        
+        if (isVisible) {
+          jumpBtn.classList.remove('visible');
+        } else {
+          jumpBtn.classList.add('visible');
+        }
+      }
+
+      window.addEventListener('scroll', updateJumpBtnVisibility);
+      window.addEventListener('resize', updateJumpBtnVisibility);
+      
+      // Initial check
+      setTimeout(updateJumpBtnVisibility, 200);
     }
 
     loadGameResult();
