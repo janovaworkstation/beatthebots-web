@@ -187,7 +187,6 @@
     function fmtKeyword(g) {
       if (!g) return { text: '—', cls: '' };
       if (!g.solved) return { text: 'Failed', cls: 'score-bad' };
-      if (g.attempts_used <= 6) return { text: `${g.attempts_used}/6`, cls: ptsClass(g.points) };
       return { text: `${g.points} pts`, cls: ptsClass(g.points) };
     }
 

@@ -213,7 +213,6 @@
       }
       if (gameKey === 'keyword') {
         if (!r.solved) return { text: 'Failed', cls: 'score-bad' };
-        if (r.attempts_used != null && r.attempts_used <= 6) return { text: `${r.attempts_used}/6`, cls: ptsClass(pts) };
         return { text: `${pts} pts`, cls: ptsClass(pts) };
       }
       return { text: '—', cls: '' };
