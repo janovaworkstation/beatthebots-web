@@ -203,8 +203,11 @@
         return { text: 'X/6', cls: 'score-bad' };
       }
       if (gameKey === 'connections') {
-        // Keep the win/loss label, but colorize using normalized points.
-        return { text: r.solved ? 'Solved ✓' : 'Failed ✗', cls: ptsClass(pts) };
+        if (r.solved && r.attempts_used != null) {
+          return { text: `${r.attempts_used}`, cls: ptsClass(pts) };
+        }
+        if (r.solved) return { text: 'Solved ✓', cls: ptsClass(pts) };
+        return { text: 'Failed ✗', cls: 'score-bad' };
       }
       if (gameKey === 'strands') {
         if (r.solved) return { text: 'Solved ✓', cls: 'score-good' };
@@ -240,11 +243,34 @@
         const g = games[gk];
         if (!g) return '';
 
-        const rows = g.results.map(r => {
+        // Sort Connections by attempts_used (fewest first for solves, then fails)
+        let sortedResults = [...g.results];
+        if (gk === 'connections') {
+          sortedResults.sort((a, b) => {
+            if (a.solved && !b.solved) return -1;
+            if (!a.solved && b.solved) return 1;
+            if (a.solved && b.solved) {
+              const aAttempts = a.attempts_used ?? Infinity;
+              const bAttempts = b.attempts_used ?? Infinity;
+              return aAttempts - bAttempts;
+            }
+            return 0;
+          });
+        }
+
+        const rows = sortedResults.map((r, idx) => {
           const sc = gameScore(gk, r);
           let badge = '';
-          if (r.winner && !r.tied) badge = `<span class="winner-badge">Winner</span>`;
-          else if (r.winner && r.tied) badge = `<span class="winner-badge">Tied</span>`;
+          if (gk === 'connections') {
+            const isFirst = idx === 0 && r.solved;
+            const prevSameScore = idx > 0 && sortedResults[idx-1].solved && 
+                                  (r.attempts_used ?? null) === (sortedResults[idx-1].attempts_used ?? null);
+            if (isFirst && !prevSameScore) badge = `<span class="winner-badge">Winner</span>`;
+            else if (prevSameScore) badge = `<span class="winner-badge">Tied</span>`;
+          } else {
+            if (r.winner && !r.tied) badge = `<span class="winner-badge">Winner</span>`;
+            else if (r.winner && r.tied) badge = `<span class="winner-badge">Tied</span>`;
+          }
 
           return `<div class="result-row">
             <div class="result-model">
