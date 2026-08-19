@@ -435,8 +435,17 @@
         const isHuman = r.provider === 'Human' || r.model_name === 'jlusenhop';
         
         let badge = '';
-        if (r.winner && !r.tied) badge = `<span class="winner-badge">Winner</span>`;
-        else if (r.winner && r.tied) badge = `<span class="winner-badge">Tied</span>`;
+        if (gameKey === 'connections') {
+          if (rank === 1 && r.solved) badge = `<span class="winner-badge">Winner</span>`;
+          else if (rank > 1 && idx > 0 && r.solved && sortedResults[idx-1].solved && 
+                   r.normalizedPoints === sortedResults[idx-1].normalizedPoints &&
+                   (r.attempts_used ?? null) === (sortedResults[idx-1].attempts_used ?? null)) {
+            badge = `<span class="winner-badge">Tied</span>`;
+          }
+        } else {
+          if (r.winner && !r.tied) badge = `<span class="winner-badge">Winner</span>`;
+          else if (r.winner && r.tied) badge = `<span class="winner-badge">Tied</span>`;
+        }
 
         return `<div class="result-row ${isHuman ? 'human-row' : ''}" ${isHuman ? 'id="human-result-row"' : ''}>
           <div class="result-left">

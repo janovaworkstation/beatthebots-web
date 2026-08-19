@@ -258,11 +258,19 @@
           });
         }
 
-        const rows = sortedResults.map(r => {
+        const rows = sortedResults.map((r, idx) => {
           const sc = gameScore(gk, r);
           let badge = '';
-          if (r.winner && !r.tied) badge = `<span class="winner-badge">Winner</span>`;
-          else if (r.winner && r.tied) badge = `<span class="winner-badge">Tied</span>`;
+          if (gk === 'connections') {
+            const isFirst = idx === 0 && r.solved;
+            const prevSameScore = idx > 0 && sortedResults[idx-1].solved && 
+                                  (r.attempts_used ?? null) === (sortedResults[idx-1].attempts_used ?? null);
+            if (isFirst && !prevSameScore) badge = `<span class="winner-badge">Winner</span>`;
+            else if (prevSameScore) badge = `<span class="winner-badge">Tied</span>`;
+          } else {
+            if (r.winner && !r.tied) badge = `<span class="winner-badge">Winner</span>`;
+            else if (r.winner && r.tied) badge = `<span class="winner-badge">Tied</span>`;
+          }
 
           return `<div class="result-row">
             <div class="result-model">
