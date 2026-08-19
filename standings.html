@@ -176,6 +176,9 @@
     }
     function fmtConnections(g, long) {
       if (!g) return { text: '—', cls: '' };
+      if (g.solved && g.attempts_used != null) {
+        return { text: `${g.attempts_used}`, cls: ptsClass(g.points) };
+      }
       if (long) return { text: g.solved ? 'Solved ✓' : 'Failed ✗', cls: g.solved ? 'score-good' : 'score-bad' };
       return { text: g.solved ? '✓' : '✗', cls: g.solved ? 'score-good' : 'score-bad' };
     }
@@ -255,8 +258,23 @@
 
       const breakdownCards = games.map(({ key, label, source, fmt }) => {
         const sorted = [...data.standings].sort((a, b) => {
-          const pa = a.games[key] ? a.games[key].points : -1;
-          const pb = b.games[key] ? b.games[key].points : -1;
+          const ga = a.games[key];
+          const gb = b.games[key];
+          const pa = ga ? ga.points : -1;
+          const pb = gb ? gb.points : -1;
+          
+          if (key === 'connections') {
+            const aSolved = ga && ga.solved;
+            const bSolved = gb && gb.solved;
+            if (aSolved && !bSolved) return -1;
+            if (!aSolved && bSolved) return 1;
+            if (aSolved && bSolved) {
+              const aAttempts = ga.attempts_used ?? Infinity;
+              const bAttempts = gb.attempts_used ?? Infinity;
+              return aAttempts - bAttempts;
+            }
+          }
+          
           return pb - pa;
         });
         const miniRows = sorted.map(m => {

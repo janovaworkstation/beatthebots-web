@@ -334,7 +334,11 @@
         return { text: 'X/6', cls: 'score-bad' };
       }
       if (gameKey === 'connections') {
-        return { text: r.solved ? 'Solved ✓' : 'Failed ✗', cls: ptsClass(pts) };
+        if (r.solved && r.attempts_used != null) {
+          return { text: `${r.attempts_used}`, cls: ptsClass(pts) };
+        }
+        if (r.solved) return { text: 'Solved ✓', cls: ptsClass(pts) };
+        return { text: 'Failed ✗', cls: 'score-bad' };
       }
       if (gameKey === 'strands') {
         if (r.solved) return { text: 'Solved ✓', cls: 'score-good' };
