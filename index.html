@@ -95,37 +95,7 @@
       text-transform: uppercase; color: var(--cream-dim);
     }
 
-    /* waitlist */
-    #waitlist { display: flex; flex-direction: column; align-items: center; gap: 12px; }
-    .waitlist-row { display: flex; }
-    .waitlist-row input {
-      background: var(--bg-elevated);
-      border: 1px solid var(--muted);
-      border-right: none;
-      color: var(--cream);
-      font-family: 'EB Garamond', serif;
-      font-size: 17px;
-      padding: 13px 20px;
-      width: 290px; outline: none;
-      transition: border-color 0.2s;
-    }
-    .waitlist-row input::placeholder { color: var(--muted); }
-    .waitlist-row input:focus { border-color: var(--gold-dim); }
-    .waitlist-row button {
-      background: var(--gold); color: var(--bg);
-      border: none;
-      font-family: 'Courier Prime', monospace;
-      font-size: 11px; letter-spacing: 0.2em;
-      text-transform: uppercase;
-      padding: 13px 24px; cursor: pointer;
-      transition: background 0.2s;
-    }
-    .waitlist-row button:hover { background: var(--gold-light); }
-    .waitlist-note {
-      font-family: 'Courier Prime', monospace;
-      font-size: 10px; letter-spacing: 0.15em;
-      text-transform: uppercase; color: var(--muted);
-    }
+    /* waitlist - REMOVED FOR ARCHIVE */
 
     /* hero rule */
     .hero-rule {
@@ -179,8 +149,6 @@
     @media (max-width: 768px) {
       #hero { padding: 100px 24px 80px; }
       .hero-title { font-size: clamp(46px, 12vw, 80px); }
-      .waitlist-row { flex-direction: column; }
-      .waitlist-row input { width: 100%; border-right: 1px solid var(--muted); border-bottom: none; }
       .preview-grid { grid-template-columns: 1fr; }
       .how-grid { grid-template-columns: 1fr; }
       .app-callout { padding: 40px 24px; }
@@ -219,7 +187,7 @@
       </div>
 
       <p class="hero-tagline fade-up delay-2">
-        Can you beat the world's most powerful AI — every single day?
+        A daily AI competition that ran from January–August 2026
       </p>
 
       <div class="model-pills fade-up delay-3">
@@ -230,32 +198,32 @@
         <div class="model-pill"><div class="dot" style="background:var(--kimi)"></div>Kimi K2.5</div>
       </div>
 
-      <div id="waitlist" class="fade-up delay-4">
-        <div class="waitlist-row">
-          <input type="email" placeholder="your@email.com" id="email-input" />
-          <button id="waitlist-btn">Get Daily Updates</button>
-        </div>
-        <div class="waitlist-note">Daily results &middot; Free forever</div>
+      <div class="fade-up delay-4" style="max-width:600px;padding:24px 32px;background:rgba(201,160,82,0.08);border:1px solid var(--gold-dim);">
+        <p style="font-family:'Courier Prime',monospace;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);text-align:center;line-height:1.7;">
+          Beat the Bots Daily has ended.<br>
+          This site is preserved as an archive of the competition.<br>
+          Explore past results, episodes, and standings below.
+        </p>
       </div>
     </section>
 
     <!-- GOLD RULE: clear hero end -->
     <div class="hero-rule"></div>
 
-    <!-- TODAY'S WINNER + LATEST EPISODE -->
+    <!-- LATEST EPISODE -->
     <div class="band band-dark">
       <div class="inner" style="text-align:center;">
-        <span class="label">Live Competition</span>
-        <h2 class="section-title serif" style="margin-bottom:16px;">Today's <span class="gold">Winner</span></h2>
-        <p id="todays-winner-line" style="font-family:'Courier Prime',monospace;font-size:15px;letter-spacing:0.08em;color:var(--cream-dim);margin-bottom:40px;">
-          <a href="today.html" style="color:var(--gold);">See today's full results →</a>
+        <span class="label">Competition Archive</span>
+        <h2 class="section-title serif" style="margin-bottom:16px;">Final <span class="gold">Episodes</span></h2>
+        <p style="font-family:'Courier Prime',monospace;font-size:15px;letter-spacing:0.08em;color:var(--cream-dim);margin-bottom:40px;">
+          Watch the AI models compete in word games · January–August 2026
         </p>
         <div id="homepage-embed" style="max-width:720px;margin:0 auto;aspect-ratio:16/9;background:#000;border-radius:4px;overflow:hidden;">
           <div class="loading-state" style="height:100%;display:flex;align-items:center;justify-content:center;">
-            Watch on <a href="https://www.youtube.com/@beatthebotsdaily" target="_blank" rel="noopener" style="color:var(--gold);margin-left:6px;">YouTube →</a>
+            View the archive on <a href="https://www.youtube.com/@beatthebotsdaily" target="_blank" rel="noopener" style="color:var(--gold);margin-left:6px;">YouTube →</a>
           </div>
         </div>
-        <p style="margin-top:16px;"><a href="episodes.html" style="color:var(--gold);font-family:'Courier Prime',monospace;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;">Browse all episodes →</a></p>
+        <p style="margin-top:16px;"><a href="episodes.html" style="color:var(--gold);font-family:'Courier Prime',monospace;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;">Browse episode archive →</a></p>
       </div>
     </div>
 
@@ -270,22 +238,22 @@
 
           <a href="standings.html" class="card preview-card bracketed" style="text-decoration:none;">
             <div class="preview-label">Standings</div>
-            <h3>Daily Leaderboard</h3>
-            <p>See how all five AI models rank today, this week, and all time across every game.</p>
+            <h3>Historical Leaderboard</h3>
+            <p>See how all five AI models ranked across the competition — by day, week, and all time.</p>
             <div class="preview-arrow">View standings →</div>
           </a>
 
           <a href="today.html" class="card preview-card bracketed" style="text-decoration:none;">
-            <div class="preview-label">Today</div>
-            <h3>Today's Game Results</h3>
-            <p>Full results from today's Wordle, Connections, Strands, and Keyword — plus today's episode.</p>
-            <div class="preview-arrow">See today →</div>
+            <div class="preview-label">Results</div>
+            <h3>Game Results Archive</h3>
+            <p>Browse historical results from Wordle, Connections, Strands, and Keyword across 8 months of competition.</p>
+            <div class="preview-arrow">Browse results →</div>
           </a>
 
           <a href="episodes.html" class="card preview-card bracketed" style="text-decoration:none;">
             <div class="preview-label">Episodes</div>
-            <h3>Watch the Bots Play</h3>
-            <p>Every episode, every game. Watch each AI model reason through the puzzle in real time.</p>
+            <h3>Video Archive</h3>
+            <p>Every episode, every game. Watch AI models reason through puzzles in real time.</p>
             <div class="preview-arrow">Browse episodes →</div>
           </a>
 
@@ -293,46 +261,46 @@
       </div>
     </div>
 
-    <!-- HOW IT WORKS -->
+    <!-- HOW IT WORKED -->
     <div class="band band-dark">
       <div class="inner">
         <div class="section-header">
           <span class="label">The Format</span>
-          <h2 class="section-title serif">How It <span class="gold">Works</span></h2>
+          <h2 class="section-title serif">How It <span class="gold">Worked</span></h2>
         </div>
         <div class="how-grid">
           <div class="how-card">
             <div class="how-number">01</div>
-            <h3>AI Models Play First</h3>
-            <p>Every night at midnight, five frontier AI models compete across Wordle, Connections, Strands, and Keyword. Automatically, every day.</p>
+            <h3>AI Models Played First</h3>
+            <p>Every night at midnight, five frontier AI models competed across Wordle, Connections, Strands, and Keyword. Automatically, every day.</p>
           </div>
           <div class="how-card">
             <div class="how-number">02</div>
-            <h3>Watch the Episode</h3>
-            <p>A new video drops every morning. Watch each model reason through the puzzle in real time — hear their logic, see who wins.</p>
+            <h3>Daily Video Episodes</h3>
+            <p>A new video dropped every morning. Each episode showed how the models reasoned through the puzzle in real time — their logic, their strategies, who won.</p>
           </div>
           <div class="how-card">
             <div class="how-number">03</div>
-            <h3>Then You Compete</h3>
-            <p>Compare your daily scores against the AI models. Did you beat Claude? Outperform GPT-4o? Find out exactly where you rank — coming to iOS &amp; Android.</p>
+            <h3>Public Leaderboard</h3>
+            <p>All results were tracked publicly — daily winners, weekly standings, and all-time records. The competition ran for 8 months from January–August 2026.</p>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- YOUTUBE SUBSCRIBE CTA -->
+    <!-- YOUTUBE ARCHIVE CTA -->
     <div class="band band-raised">
       <div class="inner">
         <div class="card bracketed app-callout">
-          <span class="label">New Episodes Every Morning</span>
-          <h2 class="serif">Never Miss a <span class="gold">Competition</span></h2>
-          <p>Four new videos drop every morning — Wordle, Connections, Strands, and Keyword. Subscribe free and watch the AIs compete daily.</p>
+          <span class="label">Video Archive</span>
+          <h2 class="serif">369+ Episodes <span class="gold">Preserved</span></h2>
+          <p>Eight months of daily AI competition — every episode is still available on YouTube. Watch five frontier AI models compete in Wordle, Connections, Strands, and Keyword.</p>
           <div style="margin-top:32px;">
-            <a href="https://www.youtube.com/@beatthebotsdaily?sub_confirmation=1" target="_blank" rel="noopener" class="yt-subscribe-btn">
-              &#9654;&nbsp; Subscribe on YouTube — It's Free
+            <a href="https://www.youtube.com/@beatthebotsdaily" target="_blank" rel="noopener" class="yt-subscribe-btn">
+              &#9654;&nbsp; Watch on YouTube
             </a>
           </div>
-          <div class="app-note">4 new videos every morning &middot; 369+ episodes available</div>
+          <div class="app-note">January–August 2026 &middot; 369+ episodes archived</div>
         </div>
       </div>
     </div>
@@ -351,97 +319,25 @@
   </footer>
 
   <script>
-    const CK_API_KEY = 't7CWFaTZ8rerK8mIrpTz5g';
-    const CK_FORM_ID = '9119762';
-
-    async function submitWaitlist(email) {
-      const res = await fetch(`https://api.convertkit.com/v3/forms/${CK_FORM_ID}/subscribe`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ api_key: CK_API_KEY, email }),
-      });
-      if (!res.ok) throw new Error('Subscribe failed');
-      return res.json();
-    }
-
-    document.getElementById('waitlist-btn').addEventListener('click', async () => {
-      const input = document.getElementById('email-input');
-      const btn   = document.getElementById('waitlist-btn');
-      const email = input.value.trim();
-
-      if (!email || !email.includes('@')) {
-        input.style.borderColor = 'var(--grok)';
-        input.focus();
-        return;
-      }
-
-      btn.textContent = 'Joining…';
-      input.disabled = btn.disabled = true;
-
-      try {
-        await submitWaitlist(email);
-        btn.textContent = "You're on the list ✓";
-        btn.style.background = '#5DB87A';
-        document.querySelector('.waitlist-note').textContent =
-          "Check your inbox to confirm — daily results and updates incoming.";
-      } catch (_) {
-        btn.textContent = 'Try again';
-        btn.style.background = 'var(--grok)';
-        input.disabled = btn.disabled = false;
-        input.style.borderColor = 'var(--grok)';
-      }
-    });
-
-    document.getElementById('email-input').addEventListener('keydown', e => {
-      if (e.key === 'Enter') document.getElementById('waitlist-btn').click();
-    });
-  </script>
-
-  <script>
-    const MODEL_DISPLAY = { claude: 'Claude', gpt: 'GPT-4o', gemini: 'Gemini', grok: 'Grok', kimi: 'Kimi K2.5' };
-
-    function modelLabel(name) {
-      if (!name) return name;
-      const key = name.toLowerCase();
-      for (const [k, v] of Object.entries(MODEL_DISPLAY)) {
-        if (key.includes(k)) return v;
-      }
-      return name;
-    }
-
+    // Archive site - load latest video embed if API is available, fail silently otherwise
     async function loadHomepageData() {
-      // Load latest Wordle episode embed
       try {
-        const v = await apiFetch('/api/videos/latest?game_type=wordle');
+        const v = await apiFetch('/api/videos/latest?game_type=wordle', { timeout: 5000, retries: 1 });
         const embedDiv = document.getElementById('homepage-embed');
         if (v && v.embed_url) {
           embedDiv.innerHTML = `<iframe src="${v.embed_url}?rel=0&modestbranding=1"
-            title="${v.title || 'Latest Beat the Bots Episode'}"
+            title="${v.title || 'Beat the Bots Episode'}"
             frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
             allowfullscreen style="width:100%;height:100%;"></iframe>`;
         }
-      } catch (_) { /* leave fallback link */ }
-
-      // Load today's winner
-      try {
-        const data = await apiFetch('/api/results/today');
-        const results = Array.isArray(data) ? data : (data.results || []);
-        const wordleResults = results.filter(r => (r.game_type || '').toLowerCase() === 'wordle');
-        const winner = wordleResults.find(r => r.winner && !r.tied);
-        const tied = wordleResults.filter(r => r.winner && r.tied);
-        const winnerLine = document.getElementById('todays-winner-line');
-        if (winner) {
-          const guesses = winner.guesses || winner.score;
-          const detail = guesses ? ` (${guesses} ${guesses === 1 ? 'guess' : 'guesses'})` : '';
-          winnerLine.innerHTML = `Today's Wordle Winner: <strong style="color:var(--gold)">${modelLabel(winner.model_name)}</strong>${detail} &middot; <a href="today.html" style="color:var(--gold)">Full results →</a>`;
-        } else if (tied.length > 1) {
-          const names = tied.map(r => modelLabel(r.model_name)).join(' &amp; ');
-          winnerLine.innerHTML = `Today's Wordle: <strong style="color:var(--gold)">${names} tied</strong> &middot; <a href="today.html" style="color:var(--gold)">Full results →</a>`;
-        }
-      } catch (_) { /* leave fallback link */ }
+      } catch (_) {
+        // API unavailable - leave YouTube link fallback
+      }
     }
 
-    loadHomepageData();
+    if (typeof apiFetch === 'function') {
+      loadHomepageData();
+    }
   </script>
 
 </body>
