@@ -144,9 +144,16 @@
       <li><a href="episodes.html" class="active">Episodes</a></li>
       <li><a href="models.html">Models</a></li>
     </ul>
-    <a href="index.html#waitlist" class="nav-cta">Join Waitlist</a>
+    <a href="https://www.youtube.com/@beatthebotsdaily" target="_blank" rel="noopener" class="nav-cta">Watch on YouTube</a>
     <button class="nav-hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
   </nav>
+
+  <!-- ARCHIVE NOTICE -->
+  <div style="background:rgba(201,160,82,0.12);border-bottom:1px solid var(--gold-dim);padding:12px 48px;text-align:center;margin-top:64px;">
+    <p style="font-family:'Courier Prime',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;color:var(--gold);margin:0;">
+      Archive Site · Beat the Bots Daily ended August 2026 · <a href="index.html" style="color:var(--gold);text-decoration:underline;">Learn more</a>
+    </p>
+  </div>
 
   <div class="page-content">
 
@@ -398,7 +405,7 @@
         document.getElementById('episodes-grid-container').innerHTML = `
           <div class="error-state">
             <strong>Episodes unavailable</strong>
-            Check back soon
+            Historical episodes are temporarily unavailable. Visit <a href="https://www.youtube.com/@beatthebotsdaily" target="_blank" rel="noopener" style="color:var(--gold)">YouTube</a> for the full archive.
             <button class="retry-btn" onclick="loadEpisodes()">Try Again</button>
           </div>`;
       }
